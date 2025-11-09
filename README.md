@@ -18,6 +18,8 @@ The overall goal of BiteRec is to create a personal, easy-to-use digital food jo
 
 ## Project Wireframe
 
-TODO: Replace the wireframe below with you own design.
 
-![wireframe](wireframe-example.png)
+![wireframe](img/page1.png)
+![wireframe](img/page2.png)
+![wireframe](img/page3.png)
+![wireframe](img/page4.png)
