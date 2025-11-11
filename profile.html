@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BiteRec – Profile</title>
+  <link rel="icon" href="logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-shell">
+      <nav class="nav container" aria-label="Primary">
+        <a class="brand" href="index.html">
+          <img class="brand-mark" src="logo.svg" alt="BiteRec logo" width="22" height="22" />
+          <span class="brand-word">BiteRec</span>
+        </a>
+        <ul class="navlinks">
+          <li><a class="navlink" href="explore.html"><svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/></svg><span>Explore</span></a></li>
+          <li><a class="navlink" href="lists.html"><svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M7 5h14v2H7V5Zm0 6h14v2H7v-2Zm0 6h14v2H7v-2ZM3 5h2v2H3V5Zm0 6h2v2H3v-2Zm0 6h2v2H3v-2Z"/></svg><span>My List</span></a></li>
+          <li><a class="navlink navlink-icon is-active" href="profile.html" aria-label="Profile">
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"/></svg>
+          </a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container page">
+    <header class="page-header">
+      <h1>Profile</h1>
+      <p class="muted">Manage your preferences and account</p>
+    </header>
+
+    <section class="grid-profile">
+      <article class="card profile-card">
+        <div class="profile-top">
+          <div class="avatar">JC</div>
+          <div>
+            <h3 class="profile-name">Chase Davis</h3>
+            <p class="muted">Chase@example.com</p>
+          </div>
+          <div class="profile-actions">
+            <a href="#" class="btn btn--ghost">Edit</a>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h4>Preferences</h4>
+          <label class="toggle"><input type="checkbox" checked><span>Enable price tracking</span></label>
+          <label class="toggle"><input type="checkbox" checked><span>Use location for suggestions</span></label>
+          <div class="pref-chips"><span class="chip">Pizza</span><span class="chip">Burgers</span><span class="chip">Coffee</span><span class="chip">Sushi</span></div>
+        </div>
+
+        <div class="profile-section">
+          <h4>Account</h4>
+          <div class="row-split">
+            <a href="#" class="link">Manage account</a>
+            <a href="#" class="link danger">Sign out</a>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container"><small>© 2025 BiteRec</small></div>
+  </footer>
+</body>
+</html>
