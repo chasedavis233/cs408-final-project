@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BiteRec • Place</title>
+  <link rel="icon" href="logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- NAV (identical to index) -->
+  <header class="site-header">
+    <div class="nav-shell glass-nav">
+      <nav class="nav container" aria-label="Primary">
+        <a class="brand" href="index.html" aria-label="BiteRec home">
+          <img class="brand-mark" src="logo.svg" alt="BiteRec logo" width="22" height="22" />
+          <span class="brand-word">BiteRec</span>
+        </a>
+        <ul class="navlinks">
+          <li><a class="navlink" data-nav="explore" href="explore.html">
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/></svg>
+            <span>Explore</span></a></li>
+          <li><a class="navlink" data-nav="lists" href="lists.html">
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5h14v2H7V5Zm0 6h14v2H7v-2Zm0 6h14v2H7v-2ZM3 5h2v2H3V5Zm0 6h2v2H3v-2Zm0 6h2v2H3v-2Z"/></svg>
+            <span>My Lists</span></a></li>
+          <li><a class="navlink navlink-icon" data-nav="profile" href="profile.html" aria-label="Profile">
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"/></svg>
+          </a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="main" tabindex="-1">
+    <div class="page-frame">
+      <section id="hero" class="hero hero--image">
+        <div class="hero__bg"><img id="pimg" alt=""></div>
+        <div class="bg-gradient-hero"></div>
+        <div class="hero__content">
+          <h1 id="pname" class="display">Restaurant</h1>
+          <p class="muted"><span id="pcuisine"></span> • <span id="pprice"></span> • ⭐ <span id="prating"></span> • <span id="pdist"></span></p>
+          <div class="cta-row">
+            <button class="btn btn--primary">Add to Tried</button>
+            <button class="btn btn--ghost brand-outline">Add to To-Try</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="feature-band">
+        <h2>Menu preview</h2>
+        <p class="muted">This is a placeholder. When AWS is connected, we’ll hydrate with real menu, hours, and contact info based on <code>id</code>.</p>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // Placeholder: read params from the Explore card
+    const p = new URLSearchParams(location.search);
+    document.getElementById('pname').textContent   = p.get('name') || 'Restaurant';
+    document.getElementById('pimg').src            = p.get('img')  || 'https://picsum.photos/1600/900?blur=2';
+    document.getElementById('pimg').alt            = p.get('name') || 'Restaurant image';
+    document.getElementById('pcuisine').textContent= p.get('cuisine') || 'Cuisine';
+    document.getElementById('pprice').textContent  = p.get('price')   || '$$';
+    document.getElementById('prating').textContent = p.get('rating')  || '4.5';
+    document.getElementById('pdist').textContent   = p.get('dist')    || '1.0 mi';
+  </script>
+</body>
+</html>

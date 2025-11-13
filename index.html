@@ -4,151 +4,92 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BiteRec</title>
-
-  <!-- Inter font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
   <link rel="icon" href="logo.svg" type="image/svg+xml" />
+  <!-- Inter + Fraunces (display) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
+  <meta name="color-scheme" content="dark">
 </head>
+
 <body>
-
-<!-- Liquid-glass, rounded, scroll-safe navbar -->
-<header class="site-header">
-  <div class="nav-shell">
-    <nav class="nav container" aria-label="Primary">
-      <a class="brand" href="index.html">
-        <img class="brand-mark" src="logo.svg" alt="BiteRec logo" width="22" height="22" />
-        <span class="brand-word">BiteRec</span>
-      </a>
-      <ul class="navlinks">
-        <li><a class="navlink" href="explore.html">
-          <!-- search icon -->
-          <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/></svg>
-          <span>Explore</span></a>
-        </li>
-        <li><a class="navlink" href="lists.html">
-          <!-- list icon -->
-          <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5h14v2H7V5Zm0 6h14v2H7v-2Zm0 6h14v2H7v-2ZM3 5h2v2H3V5Zm0 6h2v2H3v-2Zm0 6h2v2H3v-2Z"/></svg>
-          <span>My List</span></a>
-        </li>
-        <li>
-          <a class="navlink navlink-icon" href="profile.html" aria-label="Profile">
-            <!-- profile icon -->
-            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"/>
-            </svg>
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-</header>
-
-<main id="main" tabindex="-1">
-  <!-- HERO -->
-  <section class="hero" aria-label="Welcome">
-    <div class="hero__bg" aria-hidden="true">
-      <img
-        src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=80&auto=format&fit=crop"
-        alt=""
-        loading="eager" fetchpriority="high">
-      <div class="bg-gradient-hero"></div>
+  <!-- NAV -->
+  <header class="site-header">
+    <div class="nav-shell glass-nav">
+      <nav class="nav container" aria-label="Primary">
+        <a class="brand" href="index.html" aria-label="BiteRec home">
+          <img class="brand-mark" src="logo.svg" alt="BiteRec logo" width="22" height="22" />
+          <span class="brand-word">BiteRec</span>
+        </a>
+        <ul class="navlinks">
+          <li><a class="navlink" data-nav="explore" href="explore.html">
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/></svg>
+            <span>Explore</span></a></li>
+          <li><a class="navlink" data-nav="lists" href="lists.html">
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5h14v2H7V5Zm0 6h14v2H7v-2Zm0 6h14v2H7v-2ZM3 5h2v2H3V5Zm0 6h2v2H3v-2Zm0 6h2v2H3v-2Z"/></svg>
+            <span>My Lists</span></a></li>
+          <li><a class="navlink navlink-icon" data-nav="profile" href="profile.html" aria-label="Profile">
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"/></svg>
+          </a></li>
+        </ul>
+      </nav>
     </div>
-    <div class="hero__content">
-      <h1>Your Personal Food Journey Starts Here</h1>
-      <p class="muted">Discover, track, and rate restaurants like never before. Build your culinary story, one meal at a time.</p>
-      <div class="cta-row">
-        <a class="btn btn--primary" href="explore.html">Start Exploring →</a>
-        <a class="btn btn--ghost-light" href="lists.html">View My Lists</a>
-      </div>
+  </header>
+
+  <main class="container" id="main" tabindex="-1">
+    <div class="page-frame">
+      <!-- HERO -->
+      <section class="hero hero--image" aria-label="Welcome">
+        <div class="hero__bg" aria-hidden="true">
+          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=80&auto=format&fit=crop" alt="" loading="eager" fetchpriority="high" />
+          <div class="bg-gradient-hero"></div>
+        </div>
+        <div class="hero__content">
+          <h1 class="display">Your Personal Food Journey Starts Here</h1>
+          <p class="muted">Discover, track, and rate restaurants like never before. Build your culinary story, one meal at a time.</p>
+          <div class="cta-row">
+            <a class="btn btn--primary" href="explore.html">
+              <span>Start Exploring</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13 5l7 7-7 7v-4H4v-6h9V5z"/></svg>
+            </a>
+            <a class="btn btn--ghost brand-outline" href="lists.html">View My Lists</a>
+          </div>
+        </div>
+
+        <!-- Stats glass -->
+        <aside class="glass-stat" aria-label="Your totals">
+          <div class="stat-line"><span>Saved</span><strong>128</strong></div>
+          <div class="stat-line"><span>Tried</span><strong>64</strong></div>
+          <div class="stat-line"><span>Favorites</span><strong>12</strong></div>
+        </aside>
+      </section>
+
+      <!-- Highlights -->
+      <section class="feature-band" aria-label="Highlights">
+        <h2>Track smarter, decide faster</h2>
+        <p class="muted">Tidy lists, rich notes, location-aware search, and gorgeous previews.</p>
+        <div class="grid features-3">
+          <article class="card"><h3>Smart Categorization</h3><p class="muted">Auto-tags (pizza, coffee, fine dining, etc.) keep everything organized.</p></article>
+          <article class="card"><h3>Notes & Price</h3><p class="muted">Remember what you ordered and track price without friction.</p></article>
+          <article class="card"><h3>Location-Aware</h3><p class="muted">Search by zip or “near me” and surface gems quickly.</p></article>
+        </div>
+      </section>
+
+      <!-- How it works -->
+      <section class="how" aria-label="How it works">
+        <h2 class="sr-only">How it works</h2>
+        <ol class="timeline">
+          <li class="t-item"><div class="t-dot">1</div><div class="t-card"><h3>Explore</h3><p class="muted">Browse cards, open details, and peek at ratings.</p></div></li>
+          <li class="t-item"><div class="t-dot">2</div><div class="t-card"><h3>Log</h3><p class="muted">Mark Tried / To-Try, add notes & rating.</p></div></li>
+          <li class="t-item"><div class="t-dot">3</div><div class="t-card"><h3>Revisit</h3><p class="muted">Filter by category, rating, or favorites—then book it.</p></div></li>
+        </ol>
+      </section>
     </div>
-  </section>
+  </main>
 
-  <!-- QUICK STATS -->
-  <section class="container stats" aria-label="Your stats">
-    <div class="stat"><span id="count-tried">0</span><label>Places Tried</label></div>
-    <div class="stat"><span id="count-totry">0</span><label>To Try</label></div>
-  </section>
+  <footer class="site-footer">
+    <div class="container"><small>© 2025 BiteRec</small></div>
+  </footer>
 
-  <!-- FILLER SECTIONS (matching style) -->
-  <section class="container section-centered">
-    <h2>Everything You Need to Track Your Food Adventure</h2>
-    <p class="muted">From discovering new restaurants to keeping detailed logs of your dining experiences.</p>
-  </section>
-
-  <section class="container grid-features" aria-label="Key features">
-    <article class="card">
-      <h3>Smart Categories</h3>
-      <p>Auto-tag places by cuisine, vibe, and speed (e.g., pizza, coffee, quick bites, date night).</p>
-    </article>
-    <article class="card">
-      <h3>Try List & Ratings</h3>
-      <p>Save places you want to try, mark as tried, add notes on what you ordered, and rate it.</p>
-    </article>
-    <article class="card">
-      <h3>Price Tracking</h3>
-      <p>Optionally record item prices. Totals are calculated automatically when you select multiple items.</p>
-    </article>
-    <article class="card">
-      <h3>Location-Aware</h3>
-      <p>Search by area code or current location for tailored suggestions nearby.</p>
-    </article>
-  </section>
-
-  <section class="container how-it-works" aria-label="How it works">
-    <h2>How It Works</h2>
-    <ol class="steps">
-      <li><strong>Explore:</strong> search your area and add places to your Try List.</li>
-      <li><strong>Log:</strong> when you visit, record what you had, notes, and a rating.</li>
-      <li><strong>Refine:</strong> we learn your taste to suggest better picks next time.</li>
-    </ol>
-  </section>
-
-  <section class="container grid-categories" aria-label="Popular categories">
-    <div class="chip">Pizza</div>
-    <div class="chip">Burgers</div>
-    <div class="chip">Coffee</div>
-    <div class="chip">Sushi</div>
-    <div class="chip">Tacos</div>
-    <div class="chip">Vegan</div>
-    <div class="chip">Brunch</div>
-    <div class="chip">Date Night</div>
-  </section>
-
-  <section class="container testimonials" aria-label="Testimonials">
-    <article class="quote card">
-      <p>“Love how easy it is to remember what I ordered and what I liked.”</p>
-      <span>— Sam</span>
-    </article>
-    <article class="quote card">
-      <p>“Perfect for tracking coffee shops I’ve tried while traveling.”</p>
-      <span>— Alex</span>
-    </article>
-  </section>
-
-
-
-  <section class="container section-cta">
-    <div class="cta-card">
-      <h3>Ready to start your BiteRec?</h3>
-      <p class="muted">Build your personal food log in minutes.</p>
-      <div class="cta-row">
-        <a class="btn btn--primary" href="explore.html">Start Exploring →</a>
-        <a class="btn btn--ghost" href="lists.html">View My Lists</a>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer class="site-footer">
-  <div class="container">
-    <small>© 2025 BiteRec</small>
-  </div>
-</footer>
-
-<script src="js/main.js" type="module"></script>
+  <script src="js/main.js" type="module"></script>
 </body>
 </html>

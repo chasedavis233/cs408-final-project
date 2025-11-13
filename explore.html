@@ -3,136 +3,112 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BiteRec – Explore</title>
+  <title>BiteRec • Explore</title>
   <link rel="icon" href="logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- NAV -->
   <header class="site-header">
-    <div class="nav-shell">
+    <div class="nav-shell glass-nav">
       <nav class="nav container" aria-label="Primary">
-        <a class="brand" href="index.html">
+        <a class="brand" href="index.html" aria-label="BiteRec home">
           <img class="brand-mark" src="logo.svg" alt="BiteRec logo" width="22" height="22" />
           <span class="brand-word">BiteRec</span>
         </a>
         <ul class="navlinks">
-          <li><a class="navlink is-active" href="explore.html">
+          <li><a class="navlink" data-nav="explore" href="explore.html">
             <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/></svg>
             <span>Explore</span></a></li>
-          <li><a class="navlink" href="lists.html">
+          <li><a class="navlink" data-nav="lists" href="lists.html">
             <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5h14v2H7V5Zm0 6h14v2H7v-2Zm0 6h14v2H7v-2ZM3 5h2v2H3V5Zm0 6h2v2H3v-2Zm0 6h2v2H3v-2Z"/></svg>
-            <span>My List</span></a></li>
-          <li><a class="navlink navlink-icon" href="profile.html" aria-label="Profile">
-            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"/></svg>
+            <span>My Lists</span></a></li>
+          <li><a class="navlink navlink-icon" data-nav="profile" href="profile.html" aria-label="Profile">
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"/></svg>
           </a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <main class="container page">
-    <header class="page-header">
-      <h1>Discover Restaurants</h1>
-      <p class="muted">Find and track amazing food spots near you</p>
+  <main class="container" id="main" tabindex="-1">
+    <div class="page-frame">
+      <section class="page-head">
+        <h1 class="display">Discover Restaurants</h1>
+        <p class="muted">Find and track amazing food spots near you</p>
 
-      <form class="searchbar" role="search">
-        <div class="input icon-left">
-          <span class="icon">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/></svg>
-          </span>
-          <input type="search" placeholder="Search restaurants, cuisines…" />
-        </div>
+        <!-- Pretty search bar (scoped styles in CSS) -->
+        <form class="searchbar--pretty" onsubmit="return false;">
+          <label class="input-group" aria-label="Search restaurants">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/></svg>
+            <input id="q" type="text" placeholder="Search restaurants, cuisines…" />
+          </label>
+          <label class="input-group compact" aria-label="Zip code">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg>
+            <input id="zip" inputmode="numeric" placeholder="Zip code" value="83702" />
+          </label>
+          <button id="btnSearch" class="btn btn--primary oval">Search</button>
+        </form>
+      </section>
 
-        <div class="input icon-left compact">
-          <span class="icon">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8a4 4 0 1 1-4 4a4 4 0 0 1 4-4m0-6a2 2 0 0 1 2 2v1.268a9 9 0 0 1 6.732 6.732H22a2 2 0 0 1 0 4h-1.268A9 9 0 0 1 14 20.732V22a2 2 0 0 1-4 0v-1.268A9 9 0 0 1 3.268 12H2a2 2 0 0 1 0-4h1.268A9 9 0 0 1 10 3.268V2a2 2 0 0 1 2-2Z"/></svg>
-          </span>
-          <input type="text" placeholder="Zip code" inputmode="numeric" />
-        </div>
-
-        <button class="btn btn--primary btn-search" type="button">Search</button>
-      </form>
-    </header>
-
-    <section class="grid-cards" aria-label="Results">
-      <article class="card rest-card js-open-place" data-name="The Golden Spoon" data-cuisine="Italian" data-rating="4.5" data-price="$$" data-img="https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=1200&auto=format&fit=crop">
-        <div class="rest-media">
-          <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=1200&auto=format&fit=crop" alt="" />
-          <button class="chip add" type="button" aria-label="Add to list">＋</button>
-        </div>
-        <div class="rest-body">
-          <h3 class="rest-title">The Golden Spoon</h3>
-          <div class="badges"><span class="badge">Italian</span></div>
-          <div class="rest-meta"><span class="rating">⭐ 4.5</span><span class="price">$$</span><span class="distance">⏱ 0.8 mi</span></div>
-        </div>
-      </article>
-
-      <article class="card rest-card js-open-place" data-name="Sushi Paradise" data-cuisine="Japanese" data-rating="4.8" data-price="$$$" data-img="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop">
-        <div class="rest-media">
-          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop" alt="" />
-          <button class="chip add" type="button" aria-label="Add to list">＋</button>
-        </div>
-        <div class="rest-body">
-          <h3 class="rest-title">Sushi Paradise</h3>
-          <div class="badges"><span class="badge">Japanese</span></div>
-          <div class="rest-meta"><span class="rating">⭐ 4.8</span><span class="price">$$$</span><span class="distance">🧭 1.2 mi</span></div>
-        </div>
-      </article>
-
-      <article class="card rest-card js-open-place" data-name="Taco Fiesta" data-cuisine="Mexican" data-rating="4.3" data-price="$" data-img="https://images.unsplash.com/photo-1550317138-10000687a72b?q=80&w=1200&auto=format&fit=crop">
-        <div class="rest-media">
-          <img src="https://images.unsplash.com/photo-1550317138-10000687a72b?q=80&w=1200&auto=format&fit=crop" alt="" />
-          <button class="chip add" type="button" aria-label="Add to list">＋</button>
-        </div>
-        <div class="rest-body">
-          <h3 class="rest-title">Taco Fiesta</h3>
-          <div class="badges"><span class="badge">Mexican</span></div>
-          <div class="rest-meta"><span class="rating">⭐ 4.3</span><span class="price">$</span><span class="distance">🧭 0.5 mi</span></div>
-        </div>
-      </article>
-    </section>
+      <!-- Results -->
+      <section id="results" class="grid grid-cards" aria-live="polite"></section>
+    </div>
   </main>
 
-  <!-- PLACE MODAL (matches your mockup) -->
-  <div class="modal" id="place-modal" aria-hidden="true">
-    <div class="modal-backdrop"></div>
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="place-title">
-      <button class="modal-x" data-close>×</button>
+  <script type="module">
+    // ---- Placeholder data & renderer (swap with AWS later) ----
+    const mock = (zip='83702') => ([
+      { id:'r1', name:'The Golden Spoon', cuisine:'Italian', rating:4.5, price:'$$', dist:'0.8 mi', zip,
+        img:'https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1600&auto=format&fit=crop' },
+      { id:'r2', name:'Sushi Paradise', cuisine:'Japanese', rating:4.8, price:'$$$', dist:'1.2 mi', zip,
+        img:'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?q=80&w=1600&auto=format&fit=crop' },
+      { id:'r3', name:'Slice City', cuisine:'Pizza', rating:4.3, price:'$', dist:'0.5 mi', zip,
+        img:'https://images.unsplash.com/photo-1541745537413-b804de01d7be?q=80&w=1600&auto=format&fit=crop' },
+    ]);
 
-      <header class="modal-head">
-        <h3 id="place-title">(Chosen food place)</h3>
-      </header>
+    const results = document.getElementById('results');
+    const qEl = document.getElementById('q');
+    const zipEl = document.getElementById('zip');
 
-      <div class="modal-body grid-place">
-        <div class="place-photo">
-          <img id="place-img" src="" alt="">
-        </div>
+    function cardHTML(r){
+      // Entire card navigates to place.html; the small [+] button is just a placeholder action for now
+      const url = `place.html?id=${encodeURIComponent(r.id)}&name=${encodeURIComponent(r.name)}&img=${encodeURIComponent(r.img)}&cuisine=${encodeURIComponent(r.cuisine)}&price=${encodeURIComponent(r.price)}&rating=${encodeURIComponent(r.rating)}&dist=${encodeURIComponent(r.dist)}`;
+      return `
+        <a class="card rest-card" href="${url}" data-id="${r.id}" aria-label="Open ${r.name}">
+          <div class="rest-media">
+            <img src="${r.img}" alt="${r.name}" />
+            <span class="chip add">＋</span>
+          </div>
+          <div class="rest-body">
+            <h3>${r.name}</h3>
+            <div class="row muted">
+              <span class="chip">${r.cuisine}</span><span class="sep"></span>
+              <span>⭐ ${r.rating}</span><span class="sep"></span>
+              <span>${r.price}</span><span class="sep"></span>
+              <span>📍 ${r.dist}</span>
+            </div>
+          </div>
+        </a>
+      `;
+    }
 
-        <div class="place-actions">
-          <button class="btn btn--primary" id="btn-add-tried">Add to Tried</button>
-          <button class="btn btn--ghost" id="btn-add-try">Add to TryList</button>
+    function render(list){ results.innerHTML = list.map(cardHTML).join(''); }
 
-          <label class="slider-wrap">
-            <span class="muted small">Rate</span>
-            <input type="range" id="rating" min="1" max="5" step="1" value="4">
-          </label>
-        </div>
-      </div>
+    // Initial render
+    render(mock(zipEl.value));
 
-      <footer class="modal-foot">
-        <div class="muted" id="place-info">Food place info</div>
-        <a class="btn btn--ghost" href="#" id="btn-menu">Menu</a>
-      </footer>
-    </div>
-  </div>
-
-  <footer class="site-footer">
-    <div class="container"><small>© 2025 BiteRec</small></div>
-  </footer>
-
-  <script src="js/main.js" type="module"></script>
+    // Search button (placeholder behaviour)
+    document.getElementById('btnSearch').addEventListener('click', () => {
+      // When AWS is ready, replace this with your fetch and call render(data)
+      const z = zipEl.value.trim() || '83702';
+      const data = mock(z).filter(r =>
+        (qEl.value||'').trim() ? r.name.toLowerCase().includes(qEl.value.toLowerCase()) ||
+                                 r.cuisine.toLowerCase().includes(qEl.value.toLowerCase()) : true
+      );
+      render(data);
+    });
+  </script>
 </body>
 </html>
