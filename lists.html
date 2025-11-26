@@ -7,8 +7,8 @@
   <link rel="icon" href="logo.svg" type="image/svg+xml" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
+  <!-- page-scoped styles (same as before) -->
   <style>
-    /* ===== page-scoped styles (won't change index/explore look) ===== */
     .lists-page .page-head { margin-bottom: 10px; }
     .lists-page .tabs { display:flex; gap:10px; margin:12px 0 18px; }
     .lists-page .tab{
@@ -23,15 +23,14 @@
     }
 
     .lists-page .entry{
-      display:grid; grid-template-columns: 260px 1fr auto; gap:16px;
+      display:grid; grid-template-columns: 220px 1fr auto; gap:16px;
       align-items: stretch; padding:16px; border-radius:18px;
       background: linear-gradient(180deg, rgba(255,255,255,.02), transparent 40%), 
                   color-mix(in srgb, var(--surface) 86%, black 0%);
       border:1px solid var(--chrome); box-shadow:0 8px 22px rgba(0,0,0,.18);
-      cursor: pointer;
     }
     .lists-page .entry + .entry{ margin-top:14px; }
-    .lists-page .entry-media{ border-radius:14px; overflow:hidden; border:1px solid var(--chrome); }
+    .lists-page .entry-media{ border-radius:14px; overflow:hidden; border:1px solid var(--chrome); background:#000; }
     .lists-page .entry-media img{ width:100%; height:100%; object-fit:cover; display:block; }
 
     .lists-page .entry-body h3{ margin:.1rem 0 .35rem; }
@@ -42,7 +41,7 @@
       border-radius:999px; padding:.25rem .6rem; font-weight:700;
     }
 
-    .lists-page .entry-right{ display:flex; flex-direction:column; gap:10px; align-items:flex-end; }
+    .lists-page .entry-right{ display:flex; flex-direction:column; gap:10px; align-items:flex-end; justify-content:space-between; }
     .lists-page .heart{
       display:inline-flex; align-items:center; justify-content:center;
       width:42px; height:42px; border-radius:12px; cursor:pointer;
@@ -55,42 +54,20 @@
     .lists-page .stars .star{ cursor:pointer; font-size:18px; opacity:.9; }
     .lists-page .stars .star.dim{ opacity:.35; }
 
+    .lists-page textarea.notes{
+      width:100%; min-height:70px; resize:vertical;
+      border-radius:10px; border:1px solid var(--chrome); padding:.5rem .6rem;
+      background:rgba(0,0,0,.25); color:inherit;
+    }
+
     .lists-page .panel[hidden]{ display:none; }
 
-    /* ===== modal / editor ===== */
-    .modal{ position:fixed; inset:0; z-index:1300; display:none; }
-    .modal.is-open{ display:block; }
-    .modal-backdrop{ position:absolute; inset:0; background:rgba(2,8,23,.55); backdrop-filter: blur(2px); }
-    .modal-card{
-      position:relative; max-width:980px; margin:5vh auto; background:color-mix(in srgb, var(--surface) 95%, black 0%);
-      border:1px solid var(--chrome); border-radius:18px; box-shadow:0 26px 60px rgba(0,0,0,.45); overflow:hidden;
-    }
-    .modal-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; border-bottom:1px solid var(--chrome); }
-    .modal-body{ padding:16px; display:grid; grid-template-columns: 1.2fr .8fr; gap:16px; }
-    .modal-foot{ padding:14px 16px; border-top:1px solid var(--chrome); display:flex; align-items:center; gap:12px; justify-content:space-between; }
-    .place-photo img{ width:100%; height:260px; object-fit:cover; border-radius:14px; border:1px solid var(--chrome); }
-    .form-grid{ display:grid; gap:10px; }
-    .row-mini{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .pill{ border:1px solid var(--chrome); background:rgba(255,255,255,.04); padding:.35rem .6rem; border-radius:999px; }
-    .badge{ border:1px solid var(--chrome); border-radius:999px; padding:.25rem .55rem; background:rgba(255,255,255,.04); }
-    .muter{ color:var(--muted); font-size:.92rem; }
-
-    .menu-list{ display:grid; gap:8px; max-height:280px; overflow:auto; padding-right:4px; }
-    .menu-item{ display:flex; align-items:center; justify-content:space-between; gap:8px; border:1px solid var(--chrome); border-radius:12px; padding:.5rem .65rem; background:rgba(255,255,255,.03); }
-    .menu-item button{ border-radius:10px; padding:.35rem .6rem; font-weight:700; }
-    .bubble{ display:flex; flex-wrap:wrap; gap:6px; }
-    .bubble .chip{ display:inline-flex; align-items:center; gap:6px; }
-    .chip .x{ cursor:pointer; opacity:.7; }
-    .right-col{ display:grid; gap:12px; align-content:start; }
-
-    .modal-x{
-      width:36px; height:36px; border-radius:10px; border:1px solid var(--chrome);
-      background:rgba(255,255,255,.04); cursor:pointer;
-    }
+    .lists-page .small-label{ font-size:.8rem; color:var(--muted); }
+    .lists-page .pill-btn{ font-size:.8rem; padding:.25rem .55rem; border-radius:999px; }
   </style>
 </head>
 <body data-theme="obsidian" class="lists-page">
-  <!-- NAV (identical to index with dark liquid glass) -->
+  <!-- NAV -->
   <header class="site-header">
     <div class="nav-shell glass-nav">
       <nav class="nav container" aria-label="Primary">
@@ -100,13 +77,19 @@
         </a>
         <ul class="navlinks">
           <li><a class="navlink" data-nav="explore" href="explore.html">
-            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/></svg>
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/>
+            </svg>
             <span>Explore</span></a></li>
-          <li><a class="navlink" data-nav="lists" href="lists.html">
-            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5h14v2H7V5Zm0 6h14v2H7v-2Zm0 6h14v2H7v-2ZM3 5h2v2H3V5Zm0 6h2v2H3v-2Zm0 6h2v2H3v-2Z"/></svg>
+          <li><a class="navlink is-active" data-nav="lists" href="lists.html">
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M7 5h14v2H7V5Zm0 6h14v2H7v-2Zm0 6h14v2H7v-2ZM3 5h2v2H3V5Zm0 6h2v2H3v-2Zm0 6h2v2H3v-2Z"/>
+            </svg>
             <span>My Lists</span></a></li>
           <li><a class="navlink navlink-icon" data-nav="profile" href="profile.html" aria-label="Profile">
-            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"/></svg>
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"/>
+            </svg>
           </a></li>
         </ul>
       </nav>
@@ -128,435 +111,27 @@
 
       <!-- Tried -->
       <section id="panel-tried" class="panel" role="tabpanel" aria-labelledby="tab-tried">
-        <article class="entry" data-id="golden-spoon" data-name="The Golden Spoon" data-cuisine="Italian" data-status="tried" data-rating="5" data-total="45.50" data-img="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1600&auto=format&fit=crop">
-          <div class="entry-media"><img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1600&auto=format&fit=crop" alt=""></div>
-          <div class="entry-body">
-            <h3>The Golden Spoon</h3>
-            <div class="row muted"><span class="chip">Italian</span><span class="sep"></span><span class="muter">Visited Dec 15, 2024</span><span class="sep"></span><span class="muter total">$45.50</span></div>
-            <div class="row small muted"><strong>What I had:</strong> <span class="chip">Margherita Pizza</span> <span class="chip">Tiramisu</span></div>
-          </div>
-          <div class="entry-right">
-            <div class="stars" aria-label="Rating" data-stars>
-              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-            </div>
-            <button class="heart" data-id="golden-spoon" title="Toggle favorite" aria-label="Toggle favorite">❤</button>
-          </div>
-        </article>
-
-        <article class="entry" data-id="sushi-paradise" data-name="Sushi Paradise" data-cuisine="Japanese" data-status="tried" data-rating="4" data-total="68.00" data-img="https://images.unsplash.com/photo-1514511542647-8f6e120f0b2b?q=80&w=1600&auto=format&fit=crop">
-          <div class="entry-media"><img src="https://images.unsplash.com/photo-1514511542647-8f6e120f0b2b?q=80&w=1600&auto=format&fit=crop" alt=""></div>
-          <div class="entry-body">
-            <h3>Sushi Paradise</h3>
-            <div class="row muted"><span class="chip">Japanese</span><span class="sep"></span><span class="muter">Visited Dec 10, 2024</span><span class="sep"></span><span class="muter total">$68.00</span></div>
-            <div class="row small muted"><strong>What I had:</strong> <span class="chip">Dragon Roll</span> <span class="chip">Miso Soup</span> <span class="chip">Edamame</span></div>
-          </div>
-          <div class="entry-right">
-            <div class="stars" aria-label="Rating" data-stars>
-              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star dim">★</span>
-            </div>
-            <button class="heart" data-id="sushi-paradise" title="Toggle favorite" aria-label="Toggle favorite">❤</button>
-          </div>
-        </article>
+        <p class="muted" id="msg-tried">Loading…</p>
       </section>
 
       <!-- To Try -->
       <section id="panel-try" class="panel" role="tabpanel" aria-labelledby="tab-try" hidden>
-        <article class="entry" data-id="taco-fiesta" data-name="Taco Fiesta" data-cuisine="Mexican" data-status="to_try" data-rating="0" data-total="0" data-img="https://images.unsplash.com/photo-1606756790138-261d2b21cd65?q=80&w=1600&auto=format&fit=crop">
-          <div class="entry-media"><img src="https://images.unsplash.com/photo-1606756790138-261d2b21cd65?q=80&w=1600&auto=format&fit=crop" alt=""></div>
-          <div class="entry-body">
-            <h3>Taco Fiesta</h3>
-            <div class="row muted"><span class="chip">Mexican</span><span class="sep"></span><span class="muter plan">Plan items: none</span></div>
-          </div>
-          <div class="entry-right">
-            <div class="stars" aria-label="Rating" data-stars>
-              <span class="star dim">★</span><span class="star dim">★</span><span class="star dim">★</span><span class="star dim">★</span><span class="star dim">★</span>
-            </div>
-            <button class="heart" data-id="taco-fiesta" title="Toggle favorite" aria-label="Toggle favorite">❤</button>
-          </div>
-        </article>
-
-        <article class="entry" data-id="pad-thai-house" data-name="Pad Thai House" data-cuisine="Thai" data-status="to_try" data-rating="0" data-total="0" data-img="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1600&auto=format&fit=crop">
-          <div class="entry-media"><img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1600&auto=format&fit=crop" alt=""></div>
-          <div class="entry-body">
-            <h3>Pad Thai House</h3>
-            <div class="row muted"><span class="chip">Thai</span><span class="sep"></span><span class="muter plan">Plan items: none</span></div>
-          </div>
-          <div class="entry-right">
-            <div class="stars" aria-label="Rating" data-stars>
-              <span class="star dim">★</span><span class="star dim">★</span><span class="star dim">★</span><span class="star dim">★</span><span class="star dim">★</span>
-            </div>
-            <button class="heart" data-id="pad-thai-house" title="Toggle favorite" aria-label="Toggle favorite">❤</button>
-          </div>
-        </article>
+        <p class="muted" id="msg-try">Loading…</p>
       </section>
 
       <!-- Favorites -->
       <section id="panel-fav" class="panel" role="tabpanel" aria-labelledby="tab-fav" hidden>
-        <p class="muted" id="fav-empty">Your favorites will appear here.</p>
-        <div id="fav-list"></div>
+        <p class="muted" id="msg-fav">Loading…</p>
       </section>
     </div>
   </main>
 
-  <!-- ===== Restaurant Editor Modal (click any card) ===== -->
-  <div class="modal" id="editor">
-    <div class="modal-backdrop" data-close></div>
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="ed-title">
-      <div class="modal-head">
-        <div>
-          <h2 id="ed-title" class="display" style="margin:0 0 2px"></h2>
-          <div class="muter"><span id="ed-cuisine"></span></div>
-        </div>
-        <button class="modal-x" data-close aria-label="Close">✕</button>
-      </div>
+  <footer class="site-footer">
+    <div class="container"><small>© 2025 BiteRec</small></div>
+  </footer>
 
-      <div class="modal-body">
-        <div class="form-grid">
-          <div class="place-photo"><img id="ed-img" src="" alt=""></div>
-
-          <div class="row-mini" style="align-items:center">
-            <strong>Rating:</strong>
-            <div class="stars" id="ed-stars" aria-label="Rating">
-              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-            </div>
-            <span class="muter" id="ed-rating-label"></span>
-          </div>
-
-          <label class="row-mini"><strong>What I had:</strong></label>
-          <div class="bubble" id="ed-had"></div>
-          <div class="row-mini">
-            <input id="had-input" class="pill" type="text" placeholder="Add item (e.g., Caprese)" />
-            <button class="btn btn--primary" id="btn-add-had">Add</button>
-          </div>
-
-          <div class="row-mini"><span class="muter">Total:</span> <strong id="ed-total">$0.00</strong></div>
-        </div>
-
-        <aside class="right-col">
-          <div class="row-mini"><strong>Menu (mock)</strong><span class="muter"> • Tap to add to plan</span></div>
-          <div class="menu-list" id="ed-menu"></div>
-
-          <div class="row-mini"><strong>Plan to try:</strong></div>
-          <div class="bubble" id="ed-plan"></div>
-          <div class="row-mini"><span class="muter">Planned total:</span> <strong id="ed-plan-total">$0.00</strong></div>
-
-          <div class="row-mini">
-            <button class="btn btn--primary" id="btn-mark-tried">Mark as Tried</button>
-            <button class="btn btn--ghost brand-outline" id="btn-move-try">Move to To Try</button>
-          </div>
-        </aside>
-      </div>
-
-      <div class="modal-foot">
-        <div class="muter">Changes are saved locally for now. AWS wiring will sync these.</div>
-        <div class="row-mini">
-          <button class="btn btn--ghost brand-outline" data-close>Close</button>
-          <button class="btn btn--primary" id="btn-save">Save</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script type="module">
-    /* ========================
-       Local, minimal data layer
-       ======================== */
-    const FAV_KEY = 'biterec-favs';
-    const DATA_KEY = 'biterec-lists-v1';
-
-    // mock menus (replace with AWS later)
-    const MENUS = {
-      "golden-spoon": [
-        {name:"Margherita Pizza", price:14.50},
-        {name:"Tiramisu", price:7.50},
-        {name:"Bruschetta", price:8.00},
-        {name:"Carbonara", price:16.00},
-      ],
-      "sushi-paradise": [
-        {name:"Dragon Roll", price:15.00},
-        {name:"Miso Soup", price:3.50},
-        {name:"Nigiri Set", price:18.00},
-        {name:"Edamame", price:4.50},
-      ],
-      "taco-fiesta": [
-        {name:"Al Pastor Taco", price:3.50},
-        {name:"Carne Asada Taco", price:3.75},
-        {name:"Chips & Salsa", price:4.00},
-        {name:"Horchata", price:3.00},
-      ],
-      "pad-thai-house": [
-        {name:"Pad Thai", price:13.50},
-        {name:"Green Curry", price:12.75},
-        {name:"Spring Rolls", price:6.00},
-        {name:"Thai Iced Tea", price:3.50},
-      ],
-    };
-
-    function loadData(){
-      const saved = localStorage.getItem(DATA_KEY);
-      if (saved) return JSON.parse(saved);
-      // seed from DOM
-      const items = {};
-      document.querySelectorAll('.entry').forEach(card=>{
-        const id = card.dataset.id;
-        items[id] = {
-          id,
-          name: card.dataset.name,
-          cuisine: card.dataset.cuisine,
-          status: card.dataset.status, // 'tried' | 'to_try'
-          rating: Number(card.dataset.rating || 0),
-          had: [],          // items consumed
-          plan: [],         // items planned (to try)
-          total: Number(card.dataset.total || 0),
-          img: card.dataset.img
-        };
-      });
-      localStorage.setItem(DATA_KEY, JSON.stringify(items));
-      return items;
-    }
-    let DB = loadData();
-
-    /* ============ tabs ============ */
-    const tabs = [
-      {btn: document.getElementById('tab-tried'), panel: document.getElementById('panel-tried')},
-      {btn: document.getElementById('tab-try'),  panel: document.getElementById('panel-try')},
-      {btn: document.getElementById('tab-fav'),  panel: document.getElementById('panel-fav')},
-    ];
-    function show(which){
-      tabs.forEach(({btn,panel})=>{
-        const active = btn.id === which;
-        btn.classList.toggle('is-selected', active);
-        btn.setAttribute('aria-selected', active ? 'true' : 'false');
-        panel.hidden = !active;
-      });
-    }
-    tabs.forEach(({btn})=> btn.addEventListener('click', ()=> show(btn.id)));
-    show('tab-tried');
-
-    /* ============ favorites ============ */
-    const favs = new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]'));
-    function saveFavs(){ localStorage.setItem(FAV_KEY, JSON.stringify([...favs])); renderFavs(); syncHearts(); }
-    function syncHearts(){
-      document.querySelectorAll('.heart').forEach(btn=>{
-        const id = btn.dataset.id;
-        btn.classList.toggle('is-fav', favs.has(id));
-        btn.onclick = (e)=>{ e.stopPropagation();
-          favs.has(id) ? favs.delete(id) : favs.add(id);
-          saveFavs();
-        };
-      });
-    }
-    function renderFavs(){
-      const wrap = document.getElementById('fav-list');
-      const empty = document.getElementById('fav-empty');
-      wrap.innerHTML = '';
-      if (!favs.size){ empty.hidden = false; return; }
-      empty.hidden = true;
-      favs.forEach(id=>{
-        const src = document.querySelector(`.entry[data-id="${id}"]`);
-        if (src) wrap.appendChild(src.cloneNode(true));
-      });
-    }
-    syncHearts(); renderFavs();
-
-    /* ============ stars on cards ============ */
-    function paintStars(container, value){
-      [...container.querySelectorAll('.star')].forEach((s,i)=>{
-        s.classList.toggle('dim', i >= value);
-      });
-    }
-    // attach to every data-stars container
-    document.querySelectorAll('[data-stars]').forEach(stars=>{
-      const card = stars.closest('.entry');
-      const id = card.dataset.id;
-      const val = Number(DB[id]?.rating || 0);
-      paintStars(stars,val);
-      stars.querySelectorAll('.star').forEach((star,idx)=>{
-        star.addEventListener('click', (e)=>{ e.stopPropagation();
-          DB[id].rating = idx+1;
-          localStorage.setItem(DATA_KEY, JSON.stringify(DB));
-          paintStars(stars, idx+1);
-          // update modal if open on same id
-          if (current && current.id===id) paintStars(edStars, idx+1), (edRatingLabel.textContent = `${idx+1}/5`);
-        });
-      });
-    });
-
-    /* ============ click card -> open editor ============ */
-    const editor = document.getElementById('editor');
-    const edImg = document.getElementById('ed-img');
-    const edTitle = document.getElementById('ed-title');
-    const edCuisine = document.getElementById('ed-cuisine');
-    const edStars = document.getElementById('ed-stars');
-    const edRatingLabel = document.getElementById('ed-rating-label');
-    const edHad = document.getElementById('ed-had');
-    const hadInput = document.getElementById('had-input');
-    const btnAddHad = document.getElementById('btn-add-had');
-    const edTotal = document.getElementById('ed-total');
-    const edMenu = document.getElementById('ed-menu');
-    const edPlan = document.getElementById('ed-plan');
-    const edPlanTotal = document.getElementById('ed-plan-total');
-    const btnMarkTried = document.getElementById('btn-mark-tried');
-    const btnMoveTry = document.getElementById('btn-move-try');
-    const btnSave = document.getElementById('btn-save');
-
-    let current = null; // current record (DB[id])
-
-    function openEditor(id){
-      current = DB[id];
-      if (!current) return;
-
-      edTitle.textContent = current.name;
-      edCuisine.textContent = current.cuisine;
-      edImg.src = current.img || '';
-      edRatingLabel.textContent = `${current.rating}/5`;
-
-      // paint modal stars
-      paintStars(edStars, current.rating);
-      edStars.querySelectorAll('.star').forEach((star,idx)=>{
-        star.onclick = ()=>{ current.rating = idx+1; edRatingLabel.textContent = `${current.rating}/5`; updateCardStars(id, current.rating); };
-      });
-
-      // had list
-      renderChipList(edHad, current.had, (idx)=>{ current.had.splice(idx,1); renderChipList(edHad, current.had); recalcTotals(); });
-      hadInput.value='';
-      btnAddHad.onclick = ()=>{
-        const t = hadInput.value.trim();
-        if (!t) return;
-        current.had.push(t); hadInput.value=''; renderChipList(edHad, current.had); recalcTotals();
-      };
-
-      // menu (mock)
-      renderMenu(id);
-      // plan list
-      renderChipList(edPlan, current.plan, (idx)=>{ current.plan.splice(idx,1); renderChipList(edPlan, current.plan); recalcTotals(); });
-
-      // totals
-      recalcTotals();
-      // button vis depending on status
-      btnMarkTried.style.display = current.status==='to_try' ? '' : 'none';
-      btnMoveTry.style.display  = current.status==='tried' ? '' : 'none';
-
-      editor.classList.add('is-open');
-      editor.removeAttribute('aria-hidden');
-    }
-
-    function closeEditor(){ editor.classList.remove('is-open'); editor.setAttribute('aria-hidden','true'); current=null; }
-    document.querySelectorAll('[data-close]').forEach(el=> el.addEventListener('click', closeEditor));
-    btnSave.onclick = ()=>{ persist(); closeEditor(); };
-
-    function renderChipList(container, arr, onRemove){
-      container.innerHTML='';
-      arr.forEach((txt, i)=>{
-        const el = document.createElement('span');
-        el.className='chip';
-        el.innerHTML = `${txt} <span class="x" title="Remove">✕</span>`;
-        el.querySelector('.x').onclick = ()=> onRemove?.(i);
-        container.appendChild(el);
-      });
-    }
-
-    function renderMenu(id){
-      edMenu.innerHTML='';
-      (MENUS[id] || []).forEach(item=>{
-        const row = document.createElement('div');
-        row.className='menu-item';
-        row.innerHTML = `<span>${item.name}</span><span class="muter">$${item.price.toFixed(2)}</span>`;
-        const btn = document.createElement('button');
-        btn.className='btn btn--ghost brand-outline';
-        btn.textContent='Add';
-        btn.onclick = ()=>{
-          current.plan.push(`${item.name} ($${item.price.toFixed(2)})`);
-          renderChipList(edPlan, current.plan, (idx)=>{ current.plan.splice(idx,1); renderChipList(edPlan, current.plan); recalcTotals(); });
-          recalcTotals();
-        };
-        row.appendChild(btn);
-        edMenu.appendChild(row);
-      });
-    }
-
-    function recalcTotals(){
-      // derive totals from had (anything with $(price)) + manual total base
-      const hadSum = sumFromList(current.had);
-      const planSum = sumFromList(current.plan);
-      current.total = hadSum;
-      edTotal.textContent = `$${hadSum.toFixed(2)}`;
-      edPlanTotal.textContent = `$${planSum.toFixed(2)}`;
-      persist(false); // keep autosaved feel
-      // reflect on the card if tried
-      const card = document.querySelector(`.entry[data-id="${current.id}"]`);
-      if (card && current.status==='tried'){
-        card.querySelector('.total')?.replaceChildren(document.createTextNode(`$${hadSum.toFixed(2)}`));
-      }
-      if (card && current.status==='to_try'){
-        card.querySelector('.plan')?.replaceChildren(document.createTextNode(`Plan items: ${current.plan.length||'none'}`));
-      }
-    }
-    function sumFromList(arr){
-      // parse trailing price pattern ($X.YY) if present
-      let total = 0;
-      arr.forEach(s=>{
-        const m = /\$([0-9]+(?:\.[0-9]{1,2})?)/.exec(s);
-        if (m) total += Number(m[1]);
-      });
-      return total;
-    }
-
-    function persist(refreshFavs=true){
-      localStorage.setItem(DATA_KEY, JSON.stringify(DB));
-      if (refreshFavs) renderFavs();
-    }
-
-    function updateCardStars(id, val){
-      const stars = document.querySelector(`.entry[data-id="${id}"] [data-stars]`);
-      if (stars) paintStars(stars, val);
-    }
-
-    // move between lists
-    btnMarkTried.onclick = ()=>{
-      if (!current) return;
-      current.status='tried';
-      current.had = current.had.concat(current.plan); // move planned to had
-      current.plan = [];
-      recalcTotals();
-      relocateCard(current.id, 'panel-tried');
-      btnMarkTried.style.display='none';
-      btnMoveTry.style.display='';
-    };
-    btnMoveTry.onclick = ()=>{
-      if (!current) return;
-      current.status='to_try';
-      recalcTotals();
-      relocateCard(current.id, 'panel-try');
-      btnMarkTried.style.display='';
-      btnMoveTry.style.display='none';
-    };
-
-    function relocateCard(id, targetPanelId){
-      const card = document.querySelector(`.entry[data-id="${id}"]`);
-      const target = document.getElementById(targetPanelId);
-      if (card && target){
-        target.appendChild(card);
-        // update line text
-        if (targetPanelId==='panel-tried'){
-          card.querySelector('.total')?.replaceChildren(document.createTextNode(`$${(DB[id].total||0).toFixed(2)}`));
-        }else{
-          card.querySelector('.plan')?.replaceChildren(document.createTextNode(`Plan items: ${DB[id].plan.length||'none'}`));
-        }
-      }
-      persist();
-    }
-
-    // open editor on any card click (but ignore heart/rating clicks)
-    document.querySelectorAll('.entry').forEach(card=>{
-      card.addEventListener('click', (e)=>{
-        if (e.target.closest('.heart') || e.target.closest('[data-stars]')) return;
-        openEditor(card.dataset.id);
-      });
-    });
-
-    // close on esc
-    document.addEventListener('keydown', (e)=>{ if (e.key==='Escape') closeEditor(); });
-  </script>
+  <script src="js/api.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/lists.js"></script>
 </body>
 </html>

@@ -18,14 +18,20 @@
           <span class="brand-word">BiteRec</span>
         </a>
         <ul class="navlinks">
-          <li><a class="navlink" data-nav="explore" href="explore.html">
-            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/></svg>
+          <li><a class="navlink is-active" data-nav="explore" href="explore.html">
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/>
+            </svg>
             <span>Explore</span></a></li>
           <li><a class="navlink" data-nav="lists" href="lists.html">
-            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5h14v2H7V5Zm0 6h14v2H7v-2Zm0 6h14v2H7v-2ZM3 5h2v2H3V5Zm0 6h2v2H3v-2Zm0 6h2v2H3v-2Z"/></svg>
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M7 5h14v2H7V5Zm0 6h14v2H7v-2Zm0 6h14v2H7v-2ZM3 5h2v2H3V5Zm0 6h2v2H3v-2Zm0 6h2v2H3v-2Z"/>
+            </svg>
             <span>My Lists</span></a></li>
           <li><a class="navlink navlink-icon" data-nav="profile" href="profile.html" aria-label="Profile">
-            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"/></svg>
+            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"/>
+            </svg>
           </a></li>
         </ul>
       </nav>
@@ -38,77 +44,40 @@
         <h1 class="display">Discover Restaurants</h1>
         <p class="muted">Find and track amazing food spots near you</p>
 
-        <!-- Pretty search bar (scoped styles in CSS) -->
+        <!-- Search bar -->
         <form class="searchbar--pretty" onsubmit="return false;">
           <label class="input-group" aria-label="Search restaurants">
-            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/>
+            </svg>
             <input id="q" type="text" placeholder="Search restaurants, cuisines…" />
           </label>
           <label class="input-group compact" aria-label="Zip code">
-            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg>
-            <input id="zip" inputmode="numeric" placeholder="Zip code" value="83702" />
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/>
+            </svg>
+            <input id="zip" inputmode="numeric" placeholder="Zip code" />
           </label>
-          <button id="btnSearch" class="btn btn--primary oval">Search</button>
+          <button id="btnSearch" class="btn btn--primary oval" type="button">Search</button>
+          <button id="btnAddRestaurant" class="btn btn--ghost oval" type="button">+ Add place</button>
         </form>
       </section>
 
       <!-- Results -->
       <section id="results" class="grid grid-cards" aria-live="polite"></section>
+
+      <p id="explore-empty" class="muted" hidden>No restaurants yet. Use “+ Add place” to start your list.</p>
     </div>
   </main>
 
-  <script type="module">
-    // ---- Placeholder data & renderer (swap with AWS later) ----
-    const mock = (zip='83702') => ([
-      { id:'r1', name:'The Golden Spoon', cuisine:'Italian', rating:4.5, price:'$$', dist:'0.8 mi', zip,
-        img:'https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1600&auto=format&fit=crop' },
-      { id:'r2', name:'Sushi Paradise', cuisine:'Japanese', rating:4.8, price:'$$$', dist:'1.2 mi', zip,
-        img:'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?q=80&w=1600&auto=format&fit=crop' },
-      { id:'r3', name:'Slice City', cuisine:'Pizza', rating:4.3, price:'$', dist:'0.5 mi', zip,
-        img:'https://images.unsplash.com/photo-1541745537413-b804de01d7be?q=80&w=1600&auto=format&fit=crop' },
-    ]);
+  <footer class="site-footer">
+    <div class="container"><small>© 2025 BiteRec</small></div>
+  </footer>
+  
+<!-- order matters: api.js first so BiteRecAPI exists -->
+<script src="js/api.js"></script>
+<script type="module" src="js/main.js"></script>
+<script type="module" src="js/explore.js"></script>
 
-    const results = document.getElementById('results');
-    const qEl = document.getElementById('q');
-    const zipEl = document.getElementById('zip');
-
-    function cardHTML(r){
-      // Entire card navigates to place.html; the small [+] button is just a placeholder action for now
-      const url = `place.html?id=${encodeURIComponent(r.id)}&name=${encodeURIComponent(r.name)}&img=${encodeURIComponent(r.img)}&cuisine=${encodeURIComponent(r.cuisine)}&price=${encodeURIComponent(r.price)}&rating=${encodeURIComponent(r.rating)}&dist=${encodeURIComponent(r.dist)}`;
-      return `
-        <a class="card rest-card" href="${url}" data-id="${r.id}" aria-label="Open ${r.name}">
-          <div class="rest-media">
-            <img src="${r.img}" alt="${r.name}" />
-            <span class="chip add">＋</span>
-          </div>
-          <div class="rest-body">
-            <h3>${r.name}</h3>
-            <div class="row muted">
-              <span class="chip">${r.cuisine}</span><span class="sep"></span>
-              <span>⭐ ${r.rating}</span><span class="sep"></span>
-              <span>${r.price}</span><span class="sep"></span>
-              <span>📍 ${r.dist}</span>
-            </div>
-          </div>
-        </a>
-      `;
-    }
-
-    function render(list){ results.innerHTML = list.map(cardHTML).join(''); }
-
-    // Initial render
-    render(mock(zipEl.value));
-
-    // Search button (placeholder behaviour)
-    document.getElementById('btnSearch').addEventListener('click', () => {
-      // When AWS is ready, replace this with your fetch and call render(data)
-      const z = zipEl.value.trim() || '83702';
-      const data = mock(z).filter(r =>
-        (qEl.value||'').trim() ? r.name.toLowerCase().includes(qEl.value.toLowerCase()) ||
-                                 r.cuisine.toLowerCase().includes(qEl.value.toLowerCase()) : true
-      );
-      render(data);
-    });
-  </script>
 </body>
 </html>
