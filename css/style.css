@@ -327,3 +327,375 @@ img{max-width:100%;display:block}
 .navlinks .navlink:hover,
 .navlinks .navlink:hover span,
 .navlinks .navlink:hover .nav-ico { color: #fff !important; }
+
+/* =================================================================
+   EXPLORE & DETAIL PAGE STYLES
+   ================================================================= */
+
+/* Generic page wrappers (used by detail / future pages) */
+.page {
+  padding: 32px 0;
+}
+.page-narrow {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+.inside-section {
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.02),
+      transparent 40%
+    ),
+    var(--surface);
+  border-radius: 24px;
+  border: 1px solid var(--chrome);
+  box-shadow: var(--shadow-lg);
+  padding: 22px 18px;
+}
+
+/* Small chips / pills */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.14);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.chip-add {
+  background: rgba(255, 107, 61, 0.15);
+  color: var(--brand);
+  border: 1px solid color-mix(in srgb, var(--brand) 70%, transparent);
+  cursor: pointer;
+}
+.chip-add:hover {
+  background: var(--brand);
+  color: #fff;
+}
+
+/* Separator dot / space in rows */
+.sep {
+  display: inline-block;
+  width: 10px;
+}
+
+/* === Explore search bar === */
+.searchbar--pretty {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 22px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--surface) 60%, transparent);
+  height: 46px;
+  border-radius: 14px;
+  padding: 0 12px;
+  min-width: 260px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+}
+.input-group.compact {
+  min-width: 140px;
+  max-width: 150px;
+}
+.input-group input {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  width: 100%;
+}
+.input-group input::placeholder {
+  color: color-mix(in srgb, var(--muted) 80%, transparent);
+}
+
+/* Shared button shape */
+.btn.oval {
+  border-radius: 999px;
+}
+
+/* Explore results grid */
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 18px;
+}
+
+/* Text-only restaurant cards */
+.rest-card {
+  padding: 0;
+}
+.rest-card--text {
+  padding: 16px 16px 14px;
+}
+.rest-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rest-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.rest-name {
+  margin: 0;
+  font-size: 1.02rem;
+}
+.rest-row-main {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Page heading spacing on Explore */
+.page-head {
+  margin-bottom: 6px;
+}
+
+/* === Place/detail page === */
+.place-header {
+  margin-bottom: 18px;
+}
+.place-header h1 {
+  margin: 0 0 4px;
+}
+.place-header .muted {
+  font-size: 0.95rem;
+}
+
+.place-meta {
+  margin-bottom: 18px;
+}
+.place-section {
+  margin-top: 18px;
+}
+.place-section h3 {
+  margin: 0 0 6px;
+}
+.place-section p {
+  margin: 0;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Detail page "Add to lists" button reuses base .btn styles */
+.btn-primary-detail {
+  margin-top: 8px;
+}
+
+/* === Keep nav icons orange for Explore / Lists / Profile === */
+.navlinks .navlink[data-nav="explore"],
+.navlinks .navlink[data-nav="lists"],
+.navlinks .navlink[data-nav="profile"],
+.navlinks .navlink[data-nav="explore"] span,
+.navlinks .navlink[data-nav="lists"] span,
+.navlinks .navlink[data-nav="profile"] .nav-ico,
+.navlinks .navlink[data-nav="explore"] .nav-ico,
+.navlinks .navlink[data-nav="lists"] .nav-ico {
+  color: var(--brand) !important;
+  fill: currentColor;
+}
+
+.navlinks .navlink:hover,
+.navlinks .navlink:hover span,
+.navlinks .navlink:hover .nav-ico {
+  color: #fff !important;
+  fill: currentColor;
+}
+/* ==== Explore card visual tweaks ==== */
+
+/* Make the card links look like part of the UI, not blue/purple anchors */
+a.rest-card,
+a.rest-card:link,
+a.rest-card:visited {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Bigger, white restaurant title with orange hover accent */
+.rest-name {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.rest-card:hover .rest-name {
+  color: var(--brand-2);
+}
+
+/* Slightly softer row text under the name */
+.rest-row-main {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+/* Searchbar icons (white SVG bubbles) */
+.input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  margin-right: 4px;
+}
+
+.input-icon svg {
+  width: 14px;
+  height: 14px;
+  stroke: #ffffff;
+  fill: none;
+  stroke-width: 1.7;
+}
+
+/* Fill the pin icon but keep it white */
+.input-group.compact .input-icon svg path {
+  fill: #ffffff;
+  stroke: none;
+}
+.input-group.compact .input-icon svg circle {
+  stroke: #0b0d11;
+  fill: #0b0d11;
+}
+/* Larger, dark search controls on Explore */
+.searchbar--pretty .input-group.input-group--lg {
+  height: 54px;
+  padding-inline: 14px;
+}
+
+.searchbar--pretty .btn-search-lg {
+  padding: 0.95rem 1.8rem;
+  font-size: 0.95rem;
+}
+
+/* Make search inputs match the dark theme */
+.searchbar--pretty .search-input {
+  background: transparent !important;
+  border: 0;
+  outline: none;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.searchbar--pretty .search-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Just in case the browser tries to autofill a white box */
+.searchbar--pretty .search-input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  -webkit-text-fill-color: var(--text);
+}
+/* Explore card header + actions */
+.rest-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.rest-name {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.rest-card:hover .rest-name {
+  color: var(--brand-2);
+}
+
+.rest-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.rest-actions .chip {
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(248, 113, 22, 0.4);
+  color: var(--text);
+}
+
+.rest-actions .chip-add--tried {
+  border-color: rgba(34, 197, 94, 0.7);
+}
+/* Force the orange outline on ALL nav bars */
+.glass-nav {
+  border: 1px solid color-mix(in srgb, var(--brand) 50%, #ffffff20) !important;
+}
+
+/* When scrolled, KEEP the orange outline */
+.glass-nav.is-scrolled {
+  border: 1px solid color-mix(in srgb, var(--brand) 50%, #ffffff20) !important;
+}
+/* === To-Try / Tried buttons (Explore page) === */
+.rest-actions .btn-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1.5px solid rgba(255, 107, 61, 0.45); /* orange outline */
+  background: rgba(255, 107, 61, 0.12);
+  color: var(--brand);
+  transition: 
+      background 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.15s ease,
+      box-shadow 0.25s ease;
+}
+
+/* Hover: bright orange glow + lift */
+.rest-actions .btn-tag:hover {
+  background: var(--brand);
+  color: #ffffff;
+  border-color: var(--brand);
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgba(255, 107, 61, 0.55),
+              0 6px 14px rgba(0,0,0,0.35);
+}
+
+/* === Tried version (green theme) === */
+.rest-actions .btn-tag.tried {
+  border-color: rgba(34, 197, 94, 0.6);
+  background: rgba(34, 197, 94, 0.14);
+  color: rgb(34, 197, 94);
+}
+
+.rest-actions .btn-tag.tried:hover {
+  background: rgb(34, 197, 94);
+  color: #ffffff;
+  border-color: rgb(34, 197, 94);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.55),
+              0 6px 14px rgba(0,0,0,0.35);
+  transform: translateY(-2px);
+}

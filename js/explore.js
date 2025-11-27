@@ -1,42 +1,126 @@
-// js/explore.js
-// Explore page wired to BiteRec API with safe UI states.
-
-const PROFILE_ID = "chase"; // hard-coded profile for now
+// js/explore.js — Explore page wired to BiteRec SearchPlaces Lambda
 
 const resultsEl = document.getElementById("results");
-const emptyEl   = document.getElementById("explore-empty");
+const emptyMsg  = document.getElementById("explore-empty");
 const qEl       = document.getElementById("q");
-const zipEl     = document.getElementById("zip"); // not used yet, but kept for future
+const zipEl     = document.getElementById("zip");
 const btnSearch = document.getElementById("btnSearch");
-const btnAdd    = document.getElementById("btnAddRestaurant");
 
-const hasAPI = typeof window.BiteRecAPI === "object";
+// pull APIs off the BiteRecAPI object from api.js
+const { searchPlaces, saveRestaurant } = window.BiteRecAPI || {};
 
-// ---- rendering helpers ----
+let userLat = null;
+let userLon = null;
+let lastPlaces = [];
 
-function restCard(r) {
-  const url = `place.html?id=${encodeURIComponent(r.restaurantId)}`
-    + `&name=${encodeURIComponent(r.name || "")}`;
+// ---- Distance helpers ----
+function distanceMiles(lat1, lon1, lat2, lon2) {
+  if (
+    lat1 == null || lon1 == null ||
+    lat2 == null || lon2 == null
+  ) return null;
 
-  const rating  = typeof r.rating === "number" ? r.rating.toFixed(1) : "—";
-  const price   = r.priceCategory || r.price || "";
-  const cuisine = r.cuisine || "";
+  const R = 6371;
+  const toRad = (d) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const km = R * c;
+  return km * 0.621371;
+}
+
+function formatDistance(mi) {
+  if (mi == null) return "";
+  const n = Number(mi);
+  if (!Number.isFinite(n)) return "";
+  if (n < 0.2) return "≈0.2 mi from you";
+  if (n < 1) return `${n.toFixed(1)} mi from you`;
+  if (n < 10) return `${n.toFixed(1)} mi from you`;
+  return `${Math.round(n)} mi from you`;
+}
+
+function addUserDistance(places) {
+  if (userLat == null || userLon == null) return places;
+  return places.map((p) => {
+    const d = distanceMiles(userLat, userLon, p.lat, p.lon);
+    return { ...p, distanceFromUserMi: d };
+  });
+}
+
+// ---- Card rendering ----
+function cardHTML(p) {
+  const name    = p.name || "Restaurant";
+  const cuisine = p.cuisine || p.amenity || "Restaurant";
+  const city    = p.city || "";
+  const distLbl = formatDistance(p.distanceFromUserMi);
+
+  const id = p.externalId || p.id || "";
+
+  const url = new URL("place.html", window.location.origin);
+  const params = url.searchParams;
+
+  params.set("id", id);
+  params.set("name", name);
+  params.set("cuisine", cuisine);
+
+  if (p.housenumber) params.set("housenumber", p.housenumber);
+  if (p.street)     params.set("street", p.street);
+  if (p.city)       params.set("city", p.city);
+  if (p.state)      params.set("state", p.state);
+  if (p.postcode)   params.set("postcode", p.postcode);
+
+  if (p.phone)        params.set("phone", p.phone);
+  if (p.website)      params.set("website", p.website);
+  if (p.email)        params.set("email", p.email);
+  if (p.openingHours) params.set("openingHours", p.openingHours);
+
+  if (p.takeaway)     params.set("takeaway", p.takeaway);
+  if (p.delivery)     params.set("delivery", p.delivery);
+  if (p.driveThrough) params.set("driveThrough", p.driveThrough);
+
+  // Pass both the raw miles and the pretty label to place.html
+  if (p.distanceFromUserMi != null) {
+    params.set("distanceMi", p.distanceFromUserMi.toString());
+  }
+  if (distLbl) {
+    params.set("dist", distLbl);
+  }
+
+  const href = url.toString();
 
   return `
-    <a class="card rest-card" href="${url}" data-id="${r.restaurantId}">
-      <div class="rest-media">
-        <img
-          src="${r.heroImage || r.img || "https://picsum.photos/800/500?food"}"
-          alt="${r.name || "Restaurant"}"
-        />
-        <span class="chip add">＋</span>
-      </div>
+    <a class="card rest-card rest-card--text" href="${href}">
       <div class="rest-body">
-        <h3>${r.name || "(Untitled place)"}</h3>
-        <div class="row muted">
-          ${cuisine ? `<span class="chip">${cuisine}</span><span class="sep"></span>` : ""}
-          ${rating  ? `<span>⭐ ${rating}</span><span class="sep"></span>` : ""}
-          ${price   ? `<span>${price}</span>` : ""}
+        <div class="rest-header-row">
+          <h3 class="rest-name">${name}</h3>
+          <div class="rest-actions">
+            <button
+              type="button"
+              class="btn-add btn-tag btn-tag--want"
+              data-add-action="want"
+              data-place-id="${id}"
+            >
+              ＋ To-try
+            </button>
+            <button
+              type="button"
+              class="btn-add btn-tag btn-tag--tried"
+              data-add-action="tried"
+              data-place-id="${id}"
+            >
+              ✓ Tried
+            </button>
+          </div>
+        </div>
+        <div class="row muted rest-row-main">
+          <span class="btn">${cuisine}</span>
+          ${city ? `<span class="sep"></span><span>${city}</span>` : ""}
+          ${distLbl ? `<span class="sep"></span><span>${distLbl}</span>` : ""}
         </div>
       </div>
     </a>
@@ -44,114 +128,128 @@ function restCard(r) {
 }
 
 function render(list) {
-  if (!Array.isArray(list) || list.length === 0) {
-    resultsEl.innerHTML = "";
-    if (emptyEl) {
-      emptyEl.hidden = false;
-      emptyEl.textContent = `No restaurants yet. Use “+ Add place” to start your list.`;
-    }
+  if (!list || list.length === 0) {
+    resultsEl.innerHTML =
+      '<p class="muted">No restaurants found. Try another ZIP or search term.</p>';
+    if (emptyMsg) emptyMsg.hidden = false;
     return;
   }
 
-  if (emptyEl) emptyEl.hidden = true;
-  resultsEl.innerHTML = list.map(restCard).join("");
+  if (emptyMsg) emptyMsg.hidden = true;
+  resultsEl.innerHTML = list.map(cardHTML).join("");
 }
 
-// ---- API load ----
+// ---- Search ----
+async function runSearch() {
+  if (!searchPlaces) {
+    console.error("BiteRecAPI.searchPlaces is not available");
+    return;
+  }
 
-async function loadRestaurants() {
-  if (!emptyEl) return;
+  const q   = qEl.value.trim();
+  const zip = zipEl.value.trim();
+
+  if (!zip) {
+    resultsEl.innerHTML =
+      '<p class="muted">Enter a ZIP code to search for restaurants.</p>';
+    if (emptyMsg) emptyMsg.hidden = false;
+    return;
+  }
+
+  resultsEl.innerHTML = '<p class="muted">Searching…</p>';
+  if (emptyMsg) emptyMsg.hidden = true;
 
   try {
-    emptyEl.hidden = false;
-    emptyEl.textContent = "Loading restaurants…";
+    const data = await searchPlaces(zip, q);
+    lastPlaces = addUserDistance(data.places || []);
+    render(lastPlaces);
+  } catch (err) {
+    console.error("search error", err);
+    resultsEl.innerHTML =
+      '<p class="muted">Search failed. Please try again later.</p>';
+    if (emptyMsg) emptyMsg.hidden = false;
+  }
+}
 
-    let restaurants = [];
+// ---- Auto-add to lists from card buttons ----
+resultsEl.addEventListener("click", async (e) => {
+  const btn = e.target.closest("[data-add-action]");
+  if (!btn) return;
 
-    const q = (qEl?.value || "").trim();
+  e.preventDefault();          // don’t navigate to place.html
+  e.stopPropagation();
 
-    if (hasAPI) {
-      restaurants = await window.BiteRecAPI.fetchRestaurants(PROFILE_ID, {
-        q: q || undefined,
-      });
+  if (!saveRestaurant) {
+    console.warn("saveRestaurant not available on BiteRecAPI");
+    return;
+  }
+
+  const action  = btn.dataset.addAction; // "want" or "tried"
+  const placeId = btn.dataset.placeId;
+
+  const place = lastPlaces.find(
+    (p) => (p.externalId || p.id || "") === placeId
+  );
+  if (!place) return;
+
+  const profileId =
+    (window.BiteRecStore &&
+      typeof window.BiteRecStore.getActiveProfileId === "function" &&
+      window.BiteRecStore.getActiveProfileId()) ||
+    "household-main";
+
+  const restaurantId = place.externalId || place.id || `osm-${Date.now()}`;
+
+  const payload = {
+    restaurantId,
+    externalId: place.externalId || place.id || null,
+    name: place.name || "Restaurant",
+    city: place.city || "",
+    cuisine: place.cuisine || place.amenity || "Restaurant",
+    status: action === "tried" ? "tried" : "want",
+  };
+
+  try {
+    await saveRestaurant(profileId, payload);
+    // Tiny bit of feedback
+    if (action === "tried") {
+      btn.textContent = "✓ Added";
     } else {
-      console.warn("BiteRecAPI is not available; skipping API call.");
-      restaurants = []; // no backend available
+      btn.textContent = "Saved";
     }
-
-    render(restaurants);
   } catch (err) {
-    console.error("Failed to load restaurants:", err);
-    emptyEl.hidden = false;
-    emptyEl.textContent = "Failed to load restaurants from server.";
+    console.error("Failed to save restaurant", err);
   }
+});
+
+// ---- Init ----
+if (!zipEl.value) zipEl.value = "83702";
+
+if ("geolocation" in navigator) {
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      userLat = pos.coords.latitude;
+      userLon = pos.coords.longitude;
+      runSearch();
+    },
+    () => {
+      runSearch();
+    }
+  );
+} else {
+  runSearch();
 }
 
-// ---- quick “Add place” (disabled in sandboxed Live Preview) ----
-
-async function quickAddPlace() {
-  if (!hasAPI) {
-    alert("Backend API isn’t available in this context.");
-    return;
-  }
-
-  // VS Code Live Preview runs in a sandbox that blocks prompt()/alert().
-  // This keeps the UI from silently failing.
-  const isSandboxed = window.parent !== window && /vscode/i.test(navigator.userAgent);
-  if (isSandboxed) {
-    alert(
-      "VS Code Live Preview blocks pop-up prompts.\n\n" +
-      "Open explore.html in a normal browser (Chrome/Edge/etc.) to use “+ Add place”, " +
-      "or add rows via the AWS console."
-    );
-    return;
-  }
-
-  const name = prompt("Restaurant name?");
-  if (!name) return;
-
-  const city          = prompt("City (optional)?")           || "";
-  const cuisine       = prompt("Cuisine (e.g., Tacos)?")     || "";
-  const priceCategory = prompt("Price ($, $$, $$$)?")        || "$$";
-
-  try {
-    await window.BiteRecAPI.saveRestaurant(PROFILE_ID, {
-      name,
-      city,
-      cuisine,
-      priceCategory,
-      status: "to_try",
-      rating: 0,
-      favorite: false,
-      notes: "",
-      tags: cuisine ? [cuisine.toLowerCase()] : [],
-      metadata: {},
-    });
-    await loadRestaurants();
-  } catch (err) {
-    console.error("Failed to save restaurant:", err);
-    alert("Failed to save restaurant.");
-  }
-}
-
-// ---- wire up events ----
-
-btnSearch?.addEventListener("click", (e) => {
+btnSearch.addEventListener("click", (e) => {
   e.preventDefault();
-  loadRestaurants();
+  runSearch();
 });
 
-qEl?.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    loadRestaurants();
-  }
+[qEl, zipEl].forEach((input) => {
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      runSearch();
+    }
+  });
 });
-
-btnAdd?.addEventListener("click", (e) => {
-  e.preventDefault();
-  quickAddPlace();
-});
-
-// initial load
-loadRestaurants();

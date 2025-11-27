@@ -3,12 +3,106 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BiteRec • Place</title>
+  <title>BiteRec • Restaurant details</title>
   <link rel="icon" href="logo.svg" type="image/svg+xml" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
+  <meta name="color-scheme" content="dark">
+
+  <!-- Page-scoped styles just for the detail page -->
+  <style>
+    .place-page .place-section-root {
+      padding-top: 18px;
+    }
+
+    .place-page .place-header h1 {
+      font-size: clamp(1.6rem, 2.1vw, 2rem);
+      margin-bottom: 4px;
+    }
+
+    .place-page .place-header .muted {
+      font-size: 0.95rem;
+    }
+
+    .place-page #location-text,
+    .place-page #hours-text {
+      white-space: pre-line; /* keep our nice line breaks */
+    }
+
+    /* Rating block */
+    .place-page .rating-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .place-page .rating-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--brand);
+    }
+
+    .place-page .rating-badge {
+      min-width: 72px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(249, 115, 22, 0.55);
+      background: radial-gradient(
+          150% 150% at 0% 0%,
+          rgba(255, 255, 255, 0.16),
+          rgba(15, 23, 42, 0.95)
+        );
+      display: inline-flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 3px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    .place-page .rating-badge #rating-value {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--brand-2);
+    }
+
+    .place-page .rating-badge .rating-out-of {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* List buttons */
+    .place-page .list-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .place-page .btn-list {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+    }
+
+    .place-page .btn-list-primary {
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    .place-page .btn-list-secondary {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text);
+    }
+
+    .place-page .btn-list-secondary:hover {
+      border-color: var(--brand);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+  </style>
 </head>
-<body>
+
+<body class="place-page">
   <!-- NAV -->
   <header class="site-header">
     <div class="nav-shell glass-nav">
@@ -18,21 +112,32 @@
           <span class="brand-word">BiteRec</span>
         </a>
         <ul class="navlinks">
-          <li><a class="navlink" data-nav="explore" href="explore.html">
-            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="currentColor" d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"/>
-            </svg>
-            <span>Explore</span></a></li>
-          <li><a class="navlink" data-nav="lists" href="lists.html">
-            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="currentColor" d="M7 5h14v2H7V5Zm0 6h14v2H7v-2Zm0 6h14v2H7v-2ZM3 5h2v2H3V5Zm0 6h2v2H3v-2Zm0 6h2v2H3v-2Z"/>
-            </svg>
-            <span>My Lists</span></a></li>
-          <li><a class="navlink navlink-icon" data-nav="profile" href="profile.html" aria-label="Profile">
-            <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"/>
-            </svg>
-          </a></li>
+          <li>
+            <a class="navlink" data-nav="explore" href="explore.html">
+              <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor"
+                  d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z" />
+              </svg>
+              <span>Explore</span>
+            </a>
+          </li>
+          <li>
+            <a class="navlink" data-nav="lists" href="lists.html">
+              <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor"
+                  d="M7 5h14v2H7V5Zm0 6h14v2H7v-2Zm0 6h14v2H7v-2ZM3 5h2v2H3V5Zm0 6h2v2H3v-2Zm0 6h2v2H3v-2Z" />
+              </svg>
+              <span>My lists</span>
+            </a>
+          </li>
+          <li>
+            <a class="navlink navlink-icon" data-nav="profile" href="profile.html" aria-label="Profile">
+              <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor"
+                  d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" />
+              </svg>
+            </a>
+          </li>
         </ul>
       </nav>
     </div>
@@ -40,56 +145,92 @@
 
   <main class="container" id="main" tabindex="-1">
     <div class="page-frame">
-      <section id="hero" class="hero hero--image">
-        <div class="hero__bg"><img id="pimg" alt=""></div>
-        <div class="bg-gradient-hero"></div>
-        <div class="hero__content">
-          <div class="row" style="align-items:center; gap:12px;">
-            <h1 id="pname" class="display">Restaurant</h1>
-            <button id="btnFav" class="btn btn--ghost brand-outline small" type="button">♡ Favorite</button>
-          </div>
-          <p class="muted">
-            <span id="pcuisine"></span>
-            <span id="pcity"></span>
-            • <span id="pprice"></span>
-            • ⭐ <span id="prating"></span>
-          </p>
-          <div class="cta-row">
-            <button class="btn btn--primary" id="btnTried" type="button">Mark as Tried</button>
-            <button class="btn btn--ghost brand-outline" id="btnToTry" type="button">Move to To-Try</button>
-          </div>
-        </div>
-      </section>
+      <section class="page page-narrow">
+        <!-- Back link -->
+        <p class="muted" style="margin: 0 0 10px;">
+          <a href="explore.html" class="back-link" style="text-decoration:none;color:var(--brand);">
+            ← Back to Explore
+          </a>
+        </p>
 
-      <section class="feature-band">
-        <h2>Notes & rating</h2>
-        <p class="muted">Use this space to remember what you ordered, price, vibes, or anything else.</p>
+        <section class="inside-section place-section-root">
+          <!-- Header -->
+          <header class="place-header">
+            <h1 id="place-name" class="display">Restaurant</h1>
+            <p class="muted" id="place-subtitle">Cuisine • City</p>
+          </header>
 
-        <div class="grid" style="gap:16px;">
-          <div>
-            <label class="small-label" for="pnotes">Notes</label>
-            <textarea id="pnotes" style="width:100%; min-height:120px; border-radius:12px; border:1px solid var(--chrome); background:rgba(0,0,0,.25); padding:.6rem;"></textarea>
-          </div>
-          <div>
-            <label class="small-label" for="pratingInput">Rating</label>
-            <div class="row" style="gap:10px; align-items:center; margin-top:4px;">
-              <select id="pratingInput">
-                <option value="0">No rating</option>
-                <option value="1">1 ★</option>
-                <option value="2">2 ★</option>
-                <option value="3">3 ★</option>
-                <option value="4">4 ★</option>
-                <option value="5">5 ★</option>
-              </select>
-              <span id="pratingLabel" class="muted"></span>
+          <!-- SUMMARY -->
+          <section class="place-section" aria-labelledby="summary-heading">
+            <h3 id="summary-heading">Summary</h3>
+            <div class="chip-row">
+              <span class="chip" id="chip-cuisine">cuisine</span>
+              <span class="chip" id="chip-amenity" hidden>restaurant</span>
+              <span class="chip" id="chip-distance" hidden>0.0 mi away</span>
             </div>
-            <div class="row" style="gap:8px; margin-top:12px;">
-              <button id="btnSavePlace" class="btn btn--primary" type="button">Save</button>
-              <button id="btnDeletePlace" class="btn btn--ghost brand-outline" type="button">Remove from my list</button>
-              <span id="placeStatus" class="muted small"></span>
+          </section>
+
+          <!-- LOCATION -->
+          <section class="place-section" aria-labelledby="location-heading">
+            <h3 id="location-heading">Location</h3>
+            <p id="location-text" class="muted">
+              No address data.
+            </p>
+          </section>
+
+          <!-- CONTACT -->
+          <section class="place-section" aria-labelledby="contact-heading">
+            <h3 id="contact-heading">Contact</h3>
+            <p id="contact-text" class="muted">
+              No contact info available.
+            </p>
+          </section>
+
+          <!-- HOURS -->
+          <section class="place-section" aria-labelledby="hours-heading">
+            <h3 id="hours-heading">Hours</h3>
+            <p id="hours-text" class="muted">
+              No hours information available.
+            </p>
+          </section>
+
+          <!-- RATING -->
+          <section class="place-section" aria-labelledby="rating-heading">
+            <h3 id="rating-heading">Your rating</h3>
+            <p class="muted">Drag to rate this place from 1.0 – 10.0.</p>
+            <div class="rating-row">
+              <input id="rating-range" type="range" min="1" max="10" step="0.1" value="8" />
+              <div class="rating-badge">
+                <span id="rating-value">8.0</span>
+                <span class="rating-out-of">/ 10</span>
+              </div>
             </div>
-          </div>
-        </div>
+          </section>
+
+          <!-- EXTRA DETAILS -->
+          <section class="place-section" aria-labelledby="details-heading">
+            <h3 id="details-heading">Details</h3>
+            <p id="details-text" class="muted">
+              No extra details available.
+            </p>
+          </section>
+
+          <!-- LISTS -->
+          <section class="place-section" aria-labelledby="lists-heading">
+            <h3 id="lists-heading">Lists</h3>
+            <p class="muted">
+              Choose how you want to track this place.
+            </p>
+            <div class="list-buttons">
+              <button id="btn-add-to-try" class="btn btn-list btn-list-secondary" type="button">
+                + To-try list
+              </button>
+              <button id="btn-add-tried" class="btn btn--primary btn-list btn-list-primary" type="button">
+                + Already tried
+              </button>
+            </div>
+          </section>
+        </section>
       </section>
     </div>
   </main>
@@ -99,7 +240,6 @@
   </footer>
 
   <script src="js/api.js"></script>
-  <script type="module" src="js/main.js"></script>
-  <script type="module" src="js/place.js"></script>
+  <script src="js/place.js"></script>
 </body>
 </html>

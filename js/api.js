@@ -124,6 +124,30 @@
     return res.json();
   }
 
+  // ---- PLACE SEARCH (/places/search) ----
+  // Talks to your SearchPlaces Lambda (OpenStreetMap-based search).
+  async function searchPlaces(zip, q) {
+    const params = new URLSearchParams();
+    if (zip) params.set("zip", zip);
+    if (q) params.set("q", q);
+
+    const res = await fetch(
+      `${API_BASE}/places/search?${params.toString()}`,
+      {
+        // IMPORTANT: no custom headers here so it stays a simple GET
+        // and matches your Lambda CORS (only allows "content-type").
+      }
+    );
+
+    if (!res.ok) {
+      console.error("searchPlaces failed", res.status, await res.text());
+      throw new Error(`Failed to search places (status ${res.status})`);
+    }
+
+    // Lambda returns: { zip, center, count, places: [...] }
+    return res.json();
+  }
+
   // Expose API on window so your existing scripts can use it
   window.BiteRecAPI = {
     fetchProfile,
@@ -132,5 +156,6 @@
     saveRestaurant,
     fetchRestaurantById,
     deleteRestaurant,
+    searchPlaces,
   };
 })();

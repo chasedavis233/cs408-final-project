@@ -1,150 +1,260 @@
-// js/place.js
-// Detailed restaurant page – loads one restaurant from backend and lets you edit it.
+// js/place.js — detail view for a single restaurant/place
 
-const PROFILE_ID = "chase";
-
-const params = new URLSearchParams(window.location.search);
-const restaurantId = params.get("id");
-
-const imgEl = document.getElementById("pimg");
-const nameEl = document.getElementById("pname");
-const cuisineEl = document.getElementById("pcuisine");
-const cityEl = document.getElementById("pcity");
-const priceEl = document.getElementById("pprice");
-const ratingEl = document.getElementById("prating");
-
-const favBtn = document.getElementById("btnFav");
-const triedBtn = document.getElementById("btnTried");
-const toTryBtn = document.getElementById("btnToTry");
-const notesEl = document.getElementById("pnotes");
-const ratingInput = document.getElementById("pratingInput");
-const ratingLabel = document.getElementById("pratingLabel");
-const saveBtn = document.getElementById("btnSavePlace");
-const deleteBtn = document.getElementById("btnDeletePlace");
-const statusEl = document.getElementById("placeStatus");
-
-let restaurant = null;
-
-function applyToUI() {
-  if (!restaurant) return;
-  const img =
-    restaurant.imageUrl ||
-    restaurant.img ||
-    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=80&auto=format&fit=crop";
-
-  imgEl.src = img;
-  imgEl.alt = restaurant.name || "Restaurant";
-
-  nameEl.textContent = restaurant.name || "Restaurant";
-  cuisineEl.textContent = restaurant.cuisine || "";
-  cityEl.textContent = restaurant.city ? `• ${restaurant.city}` : "";
-  priceEl.textContent = restaurant.priceCategory || restaurant.price || "";
-  ratingEl.textContent = restaurant.rating || "No rating";
-
-  favBtn.textContent = restaurant.favorite ? "★ Favorited" : "♡ Favorite";
-  favBtn.classList.toggle("is-fav", !!restaurant.favorite);
-
-  notesEl.value = restaurant.notes || "";
-  const ratingVal = Number(restaurant.rating || 0);
-  ratingInput.value = String(ratingVal);
-  ratingLabel.textContent = ratingVal ? `${ratingVal}/5` : "No rating yet";
-
-  let statusText = "";
-  if (restaurant.status === "tried") statusText = "Marked as Tried";
-  else if (restaurant.status === "to_try") statusText = "On your To-Try list";
-  statusEl.textContent = statusText;
-}
-
-async function loadRestaurant() {
-  if (!restaurantId) {
-    statusEl.textContent = "Missing restaurant id.";
-    return;
+(function () {
+  function $(id) {
+    return document.getElementById(id);
   }
 
-  try {
-    restaurant = await window.BiteRecAPI.fetchRestaurantById(restaurantId);
-  } catch (err) {
-    console.warn("fetchRestaurantById failed, will try to create stub:", err);
+  const params = new URLSearchParams(window.location.search);
+
+  // --- Basic fields from query string ---
+  const restaurantId =
+    params.get("id") ||
+    params.get("restaurantId") ||
+    params.get("externalId") ||
+    "";
+
+  const name = params.get("name") || "Restaurant";
+  const cuisine = params.get("cuisine") || "";
+  const amenity = params.get("amenity") || "";
+  const city = params.get("city") || "";
+  const distMi = params.get("distanceMi") || params.get("dist") || "";
+
+  const housenumber = params.get("housenumber") || params.get("house") || "";
+  const street = params.get("street") || "";
+  const state = params.get("state") || "";
+  const postcode = params.get("postcode") || params.get("zip") || "";
+
+  const phone = params.get("phone") || "";
+  const website = params.get("website") || "";
+  const openingHours = params.get("openingHours") || params.get("hours") || "";
+
+  const takeaway = params.get("takeaway") || "";
+  const delivery = params.get("delivery") || "";
+  const driveThrough =
+    params.get("drive_through") || params.get("driveThrough") || "";
+
+  // --- Header ---
+  const nameEl = $("place-name");
+  const subtitleEl = $("place-subtitle");
+
+  nameEl.textContent = name;
+
+  const subtitleBits = [];
+  if (cuisine) subtitleBits.push(cuisine);
+  if (city) subtitleBits.push(city);
+
+  subtitleEl.textContent =
+    subtitleBits.length > 0 ? subtitleBits.join(" • ") : "Restaurant";
+
+  // --- Summary chips ---
+  const chipCuisine = $("chip-cuisine");
+  const chipAmenity = $("chip-amenity");
+  const chipDistance = $("chip-distance");
+
+  if (cuisine) {
+    chipCuisine.textContent = cuisine;
+  } else {
+    chipCuisine.style.display = "none";
   }
 
-  // If it doesn't exist yet, create a stub based on URL params
-  if (!restaurant) {
-    restaurant = {
-      restaurantId,
-      profileId: PROFILE_ID,
-      name: params.get("name") || "Restaurant",
-      cuisine: params.get("cuisine") || "",
-      priceCategory: params.get("price") || "",
-      rating: Number(params.get("rating") || 0),
-      city: "",
-      status: "to_try",
-      favorite: false,
-      notes: "",
+  // Only show amenity chip if it is meaningful and not just duplicate “restaurant”
+  const amenityClean = (amenity || "").replace(/_/g, " ").trim().toLowerCase();
+  const cuisineClean = (cuisine || "").trim().toLowerCase();
+
+  if (
+    amenity &&
+    amenityClean &&
+    amenityClean !== "restaurant" &&
+    amenityClean !== cuisineClean
+  ) {
+    chipAmenity.textContent = amenity.replace(/_/g, " ");
+    chipAmenity.hidden = false;
+  } else {
+    chipAmenity.hidden = true;
+  }
+
+  let distanceLabel = "";
+  if (distMi) {
+    const n = Number(distMi);
+    if (Number.isFinite(n) && n > 0) {
+      if (n < 0.2) distanceLabel = "≈0.2 mi away";
+      else if (n < 10) distanceLabel = `${n.toFixed(1)} mi away`;
+      else distanceLabel = `${Math.round(n)} mi away`;
+    }
+  }
+  if (distanceLabel) {
+    chipDistance.textContent = distanceLabel;
+    chipDistance.hidden = false;
+  } else {
+    chipDistance.hidden = true;
+  }
+
+  // --- Location block ---
+  const locationEl = $("location-text");
+  const lines = [];
+
+  const line1 = [housenumber, street].filter(Boolean).join(" ");
+  if (line1) lines.push(line1);
+
+  const line2 = [city, state, postcode].filter(Boolean).join(" ");
+  if (line2) lines.push(line2);
+
+  locationEl.textContent =
+    lines.length > 0 ? lines.join("\n") : "No address data.";
+
+  // --- Contact block ---
+  const contactEl = $("contact-text");
+  const contactBits = [];
+
+  if (phone) contactBits.push(`Phone: ${phone}`);
+  if (website) contactBits.push(website);
+
+  contactEl.textContent =
+    contactBits.length > 0 ? contactBits.join(" • ") : "No contact info available.";
+
+  // --- Hours: format opening_hours into nicer AM/PM lines ---
+  const hoursEl = $("hours-text");
+
+  function formatTime(hh, mm) {
+    let h = parseInt(hh, 10);
+    const m = parseInt(mm, 10);
+    const suffix = h >= 12 ? "pm" : "am";
+    if (h === 0) h = 12;
+    else if (h > 12) h -= 12;
+    const mStr = m.toString().padStart(2, "0");
+    return `${h}:${mStr} ${suffix}`;
+  }
+
+  function prettyHours(str) {
+    if (!str) return "";
+    const parts = str
+      .split(";")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const nice = parts.map((p) =>
+      p.replace(
+        /(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})/g,
+        (_, h1, m1, h2, m2) =>
+          `${formatTime(h1, m1)} – ${formatTime(h2, m2)}`
+      )
+    );
+
+    return nice.join("\n");
+  }
+
+  if (openingHours) {
+    const pretty = prettyHours(openingHours);
+    hoursEl.textContent = pretty || openingHours;
+  } else {
+    hoursEl.textContent = "No hours information available.";
+  }
+
+  // --- Extra details: takeaway / delivery / drive-through ---
+  const detailsEl = $("details-text");
+  const detailBits = [];
+
+  function labelFromYesNo(label, value) {
+    if (!value) return null;
+    const v = String(value).toLowerCase();
+    if (v === "yes") return label;
+    if (v === "no") return null;
+    return `${label}: ${value}`;
+  }
+
+  [
+    labelFromYesNo("Takeaway", takeaway),
+    labelFromYesNo("Delivery", delivery),
+    labelFromYesNo("Drive-through", driveThrough),
+  ].forEach((s) => s && detailBits.push(s));
+
+  detailsEl.textContent =
+    detailBits.length > 0 ? detailBits.join(" • ") : "No extra details available.";
+
+  // --- Rating control (1.0–10.0) ---
+  const ratingRange = $("rating-range");
+  const ratingValueEl = $("rating-value");
+
+  function getRatingNumber() {
+    if (!ratingRange) return null;
+    const v = parseFloat(ratingRange.value || "0");
+    return Number.isFinite(v) ? v : null;
+  }
+
+  if (ratingRange && ratingValueEl) {
+    const updateRating = () => {
+      const v = getRatingNumber();
+      ratingValueEl.textContent = v != null ? v.toFixed(1) : "0.0";
     };
+    ratingRange.addEventListener("input", updateRating);
+    updateRating();
+  }
+
+  // --- Backend wiring for list buttons ---
+  const api = window.BiteRecAPI || {};
+  const { saveRestaurant } = api;
+
+  function getProfileId() {
+    if (
+      window.BiteRecStore &&
+      typeof window.BiteRecStore.getActiveProfileId === "function"
+    ) {
+      return window.BiteRecStore.getActiveProfileId();
+    }
+    return "household-main";
+  }
+
+  const btnToTry = $("btn-add-to-try");
+  const btnTried = $("btn-add-tried");
+
+  async function addToList(status, buttonEl) {
+    if (!saveRestaurant) {
+      console.warn("BiteRecAPI.saveRestaurant is not available");
+      return;
+    }
+
+    const profileId = getProfileId();
+    const ratingVal = getRatingNumber();
+
+    const payload = {
+      restaurantId: restaurantId || undefined,
+      externalId: restaurantId || null,
+      name,
+      city,
+      cuisine: cuisine || amenity || "Restaurant",
+      status: status === "tried" ? "tried" : "want",
+    };
+
+    if (ratingVal != null && status === "tried") {
+      payload.rating = ratingVal;
+    }
+
+    buttonEl.disabled = true;
+
     try {
-      restaurant = await window.BiteRecAPI.saveRestaurant(PROFILE_ID, restaurant);
+      await saveRestaurant(profileId, payload);
+      if (status === "tried") {
+        buttonEl.textContent = "✓ Added to Tried";
+        buttonEl.classList.add("btn-tag--success");
+      } else {
+        buttonEl.textContent = "Saved to To-try";
+      }
     } catch (err) {
-      console.error("Failed to create stub restaurant:", err);
+      console.error("Failed to save from place page", err);
+      buttonEl.textContent = "Error, try again";
+    } finally {
+      setTimeout(() => {
+        buttonEl.disabled = false;
+      }, 600);
     }
   }
 
-  applyToUI();
-}
-
-// ---- event handlers ----
-favBtn.addEventListener("click", async () => {
-  if (!restaurant) return;
-  restaurant.favorite = !restaurant.favorite;
-  await save();
-});
-
-triedBtn.addEventListener("click", async () => {
-  if (!restaurant) return;
-  restaurant.status = "tried";
-  await save();
-});
-
-toTryBtn.addEventListener("click", async () => {
-  if (!restaurant) return;
-  restaurant.status = "to_try";
-  await save();
-});
-
-ratingInput.addEventListener("change", () => {
-  const v = Number(ratingInput.value || 0);
-  ratingLabel.textContent = v ? `${v}/5` : "No rating yet";
-});
-
-saveBtn.addEventListener("click", async () => {
-  if (!restaurant) return;
-  restaurant.notes = notesEl.value;
-  restaurant.rating = Number(ratingInput.value || 0);
-  await save();
-});
-
-deleteBtn.addEventListener("click", async () => {
-  if (!restaurantId) return;
-  if (!confirm("Remove this place from your list?")) return;
-  try {
-    await window.BiteRecAPI.deleteRestaurant(restaurantId);
-    window.location.href = "lists.html";
-  } catch (err) {
-    console.error(err);
-    alert("Failed to delete.");
+  if (btnToTry) {
+    btnToTry.addEventListener("click", () => addToList("want", btnToTry));
   }
-});
 
-async function save() {
-  try {
-    restaurant = await window.BiteRecAPI.saveRestaurant(PROFILE_ID, restaurant);
-    applyToUI();
-    statusEl.textContent = "Saved.";
-    setTimeout(() => (statusEl.textContent = ""), 1500);
-  } catch (err) {
-    console.error(err);
-    alert("Failed to save.");
+  if (btnTried) {
+    btnTried.addEventListener("click", () => addToList("tried", btnTried));
   }
-}
-
-// init
-loadRestaurant();
+})();
