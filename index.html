@@ -55,12 +55,13 @@
           </div>
         </div>
 
-        <!-- Stats glass -->
+           <!-- Stats glass -->
         <aside class="glass-stat" aria-label="Your totals">
-          <div class="stat-line"><span>Saved</span><strong>128</strong></div>
-          <div class="stat-line"><span>Tried</span><strong>64</strong></div>
-          <div class="stat-line"><span>Favorites</span><strong>12</strong></div>
+          <div class="stat-line"><span>Saved</span><strong id="heroSaved">0</strong></div>
+          <div class="stat-line"><span>Tried</span><strong id="heroTried">0</strong></div>
+          <div class="stat-line"><span>Favorites</span><strong id="heroFavs">0</strong></div>
         </aside>
+
       </section>
 
       <!-- Highlights -->
@@ -90,6 +91,7 @@
     <div class="container"><small>© 2025 BiteRec</small></div>
   </footer>
 
+    <script src="js/api.js"></script>
   <script src="js/main.js" type="module"></script>
 </body>
 </html>
