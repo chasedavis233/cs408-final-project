@@ -94,9 +94,14 @@
     return res.json();
   }
 
-  async function fetchRestaurantById(restaurantId) {
+  async function fetchRestaurantById(restaurantId, profileId = HOUSEHOLD_USER) {
+    const params = new URLSearchParams();
+    if (profileId) params.set("profileId", profileId);
+
     const res = await fetch(
-      `${API_BASE}/restaurants/${encodeURIComponent(restaurantId)}`,
+      `${API_BASE}/restaurants/${encodeURIComponent(
+        restaurantId
+      )}?${params.toString()}`,
       {
         method: "GET",
         headers: headersFor("GET"),
@@ -109,9 +114,15 @@
     return res.json();
   }
 
-  async function deleteRestaurant(restaurantId) {
+  // Delete a restaurant for a given profile
+  async function deleteRestaurant(profileId, restaurantId) {
+    const params = new URLSearchParams();
+    if (profileId) params.set("profileId", profileId);
+
     const res = await fetch(
-      `${API_BASE}/restaurants/${encodeURIComponent(restaurantId)}`,
+      `${API_BASE}/restaurants/${encodeURIComponent(
+        restaurantId
+      )}?${params.toString()}`,
       {
         method: "DELETE",
         headers: headersFor("DELETE"),
@@ -121,7 +132,12 @@
       console.error("deleteRestaurant failed", res.status, await res.text());
       throw new Error("Failed to delete restaurant");
     }
-    return res.json();
+    // 204 or empty body
+    try {
+      return await res.json();
+    } catch {
+      return {};
+    }
   }
 
   // ---- PLACE SEARCH (/places/search) ----

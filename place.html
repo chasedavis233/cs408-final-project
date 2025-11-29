@@ -148,7 +148,13 @@
       <section class="page page-narrow">
         <!-- Back link -->
         <p class="muted" style="margin: 0 0 10px;">
-          <a href="explore.html" class="back-link" style="text-decoration:none;color:var(--brand);">
+          <!-- IMPORTANT: history.back() keeps previous Explore results/scroll if we came from there -->
+          <a
+            href="explore.html"
+            class="back-link"
+            style="text-decoration:none;color:var(--brand);"
+            onclick="if (window.history.length > 1) { window.history.back(); return false; }"
+          >
             ← Back to Explore
           </a>
         </p>

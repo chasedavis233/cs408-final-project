@@ -13,6 +13,19 @@ let userLat = null;
 let userLon = null;
 let lastPlaces = [];
 
+// key for sessionStorage
+const STORAGE_KEY = "biterec:lastExploreSearch";
+
+function getDefaultZip() {
+  if (
+    window.BiteRecStore &&
+    typeof window.BiteRecStore.getDefaultZip === "function"
+  ) {
+    return window.BiteRecStore.getDefaultZip();
+  }
+  return "83702";
+}
+
 // ---- Distance helpers ----
 function distanceMiles(lat1, lon1, lat2, lon2) {
   if (
@@ -53,7 +66,7 @@ function addUserDistance(places) {
 }
 
 // ---- Card rendering ----
-function cardHTML(p) {
+function cardHTML(p, index) {
   const name    = p.name || "Restaurant";
   const cuisine = p.cuisine || p.amenity || "Restaurant";
   const city    = p.city || "";
@@ -87,10 +100,6 @@ function cardHTML(p) {
   if (p.distanceFromUserMi != null) {
     params.set("distanceMi", p.distanceFromUserMi.toString());
   }
-  if (distLbl) {
-    params.set("dist", distLbl);
-  }
-
   const href = url.toString();
 
   return `
@@ -104,6 +113,7 @@ function cardHTML(p) {
               class="btn-add btn-tag btn-tag--want"
               data-add-action="want"
               data-place-id="${id}"
+              data-place-index="${index}"
             >
               ＋ To-try
             </button>
@@ -112,8 +122,18 @@ function cardHTML(p) {
               class="btn-add btn-tag btn-tag--tried"
               data-add-action="tried"
               data-place-id="${id}"
+              data-place-index="${index}"
             >
               ✓ Tried
+            </button>
+            <button
+              type="button"
+              class="btn-add btn-tag btn-tag--fav"
+              data-add-action="fav"
+              data-place-id="${id}"
+              data-place-index="${index}"
+            >
+              ☆ Favorite
             </button>
           </div>
         </div>
@@ -136,7 +156,46 @@ function render(list) {
   }
 
   if (emptyMsg) emptyMsg.hidden = true;
-  resultsEl.innerHTML = list.map(cardHTML).join("");
+  resultsEl.innerHTML = list.map((p, idx) => cardHTML(p, idx)).join("");
+}
+
+// ---- sessionStorage helpers ----
+function saveSearchState(q, zip) {
+  try {
+    const state = {
+      q,
+      zip,
+      userLat,
+      userLon,
+      places: lastPlaces,
+    };
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (err) {
+    console.warn("Could not save explore search state", err);
+  }
+}
+
+function restoreSearchState() {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+
+    const state = JSON.parse(raw);
+    if (!state || !Array.isArray(state.places)) return false;
+
+    qEl.value   = state.q || "";
+    zipEl.value = state.zip || zipEl.value || "83702";
+
+    userLat = typeof state.userLat === "number" ? state.userLat : null;
+    userLon = typeof state.userLon === "number" ? state.userLon : null;
+
+    lastPlaces = state.places;
+    render(lastPlaces);
+    return true;
+  } catch (err) {
+    console.warn("Could not restore explore search state", err);
+    return false;
+  }
 }
 
 // ---- Search ----
@@ -163,6 +222,7 @@ async function runSearch() {
     const data = await searchPlaces(zip, q);
     lastPlaces = addUserDistance(data.places || []);
     render(lastPlaces);
+    saveSearchState(q, zip);
   } catch (err) {
     console.error("search error", err);
     resultsEl.innerHTML =
@@ -172,7 +232,7 @@ async function runSearch() {
 }
 
 // ---- Auto-add to lists from card buttons ----
-resultsEl.addEventListener("click", async (e) => {
+resultsEl.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-add-action]");
   if (!btn) return;
 
@@ -184,13 +244,14 @@ resultsEl.addEventListener("click", async (e) => {
     return;
   }
 
-  const action  = btn.dataset.addAction; // "want" or "tried"
-  const placeId = btn.dataset.placeId;
+  const action = btn.dataset.addAction; // "want" | "tried" | "fav"
+  const index  = btn.dataset.placeIndex;
+  const place  = index != null ? lastPlaces[Number(index)] : null;
 
-  const place = lastPlaces.find(
-    (p) => (p.externalId || p.id || "") === placeId
-  );
-  if (!place) return;
+  if (!place) {
+    console.warn("No place found for index", index, "lastPlaces length:", lastPlaces.length);
+    return;
+  }
 
   const profileId =
     (window.BiteRecStore &&
@@ -207,37 +268,49 @@ resultsEl.addEventListener("click", async (e) => {
     city: place.city || "",
     cuisine: place.cuisine || place.amenity || "Restaurant",
     status: action === "tried" ? "tried" : "want",
+    isFavorite: action === "fav",
   };
 
-  try {
-    await saveRestaurant(profileId, payload);
-    // Tiny bit of feedback
-    if (action === "tried") {
-      btn.textContent = "✓ Added";
-    } else {
-      btn.textContent = "Saved";
-    }
-  } catch (err) {
-    console.error("Failed to save restaurant", err);
+  // Instant feedback
+  const originalText = btn.textContent;
+  if (action === "tried") {
+    btn.textContent = "✓ Added";
+  } else if (action === "want") {
+    btn.textContent = "Saved";
+  } else {
+    btn.textContent = "★ Favorited";
   }
+
+  // Fire-and-forget save; revert text on error
+  saveRestaurant(profileId, payload).catch((err) => {
+    console.error("Failed to save restaurant", err);
+    btn.textContent = originalText;
+    alert("Sorry, something went wrong saving this place.");
+  });
 });
 
 // ---- Init ----
-if (!zipEl.value) zipEl.value = "83702";
+if (!zipEl.value) zipEl.value = getDefaultZip();
 
-if ("geolocation" in navigator) {
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      userLat = pos.coords.latitude;
-      userLon = pos.coords.longitude;
-      runSearch();
-    },
-    () => {
-      runSearch();
-    }
-  );
-} else {
-  runSearch();
+// First, try to restore last results (this is what makes Back-from-place work)
+const restored = restoreSearchState();
+
+if (!restored) {
+  // No prior search in this tab — do the normal auto-search with geolocation
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        userLat = pos.coords.latitude;
+        userLon = pos.coords.longitude;
+        runSearch();
+      },
+      () => {
+        runSearch();
+      }
+    );
+  } else {
+    runSearch();
+  }
 }
 
 btnSearch.addEventListener("click", (e) => {
