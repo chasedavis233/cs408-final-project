@@ -26,10 +26,9 @@
 
     .place-page #location-text,
     .place-page #hours-text {
-      white-space: pre-line; /* keep our nice line breaks */
+      white-space: pre-line;
     }
 
-    /* Rating block */
     .place-page .rating-row {
       display: flex;
       align-items: center;
@@ -48,10 +47,10 @@
       border-radius: 999px;
       border: 1px solid rgba(249, 115, 22, 0.55);
       background: radial-gradient(
-          150% 150% at 0% 0%,
-          rgba(255, 255, 255, 0.16),
-          rgba(15, 23, 42, 0.95)
-        );
+        150% 150% at 0% 0%,
+        rgba(255, 255, 255, 0.16),
+        rgba(15, 23, 42, 0.95)
+      );
       display: inline-flex;
       align-items: baseline;
       justify-content: center;
@@ -70,7 +69,6 @@
       color: var(--muted);
     }
 
-    /* List buttons */
     .place-page .list-buttons {
       display: flex;
       flex-wrap: wrap;
@@ -111,33 +109,33 @@
           <img class="brand-mark" src="logo.svg" alt="BiteRec logo" width="22" height="22" />
           <span class="brand-word">BiteRec</span>
         </a>
+
         <ul class="navlinks">
           <li>
             <a class="navlink" data-nav="explore" href="explore.html">
               <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                <path fill="currentColor"
-                  d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z" />
+                <path
+                  fill="currentColor"
+                  d="M11 4a7 7 0 1 1-4.95 2.05A6.97 6.97 0 0 1 11 4m0-2a9 9 0 1 0 5.657 15.9l3.72 3.72 1.415-1.414-3.72-3.72A9 9 0 0 0 11 2Z"
+                />
               </svg>
               <span>Explore</span>
             </a>
           </li>
+
           <li>
             <a class="navlink" data-nav="lists" href="lists.html">
               <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                <path fill="currentColor"
-                  d="M7 5h14v2H7V5Zm0 6h14v2H7v-2Zm0 6h14v2H7v-2ZM3 5h2v2H3V5Zm0 6h2v2H3v-2Zm0 6h2v2H3v-2Z" />
+                <path
+                  fill="currentColor"
+                  d="M7 5h14v2H7V5Zm0 6h14v2H7v-2Zm0 6h14v2H7v-2ZM3 5h2v2H3V5Zm0 6h2v2H3v-2Zm0 6h2v2H3v-2Z"
+                />
               </svg>
-              <span>My lists</span>
+              <span>My Lists</span>
             </a>
           </li>
-          <li>
-            <a class="navlink navlink-icon" data-nav="profile" href="profile.html" aria-label="Profile">
-              <svg class="nav-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                <path fill="currentColor"
-                  d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" />
-              </svg>
-            </a>
-          </li>
+
+          <!-- The profile pill (with dropdown) is injected here by js/main.js -->
         </ul>
       </nav>
     </div>
@@ -146,13 +144,11 @@
   <main class="container" id="main" tabindex="-1">
     <div class="page-frame">
       <section class="page page-narrow">
-        <!-- Back link -->
         <p class="muted" style="margin: 0 0 10px;">
-          <!-- IMPORTANT: history.back() keeps previous Explore results/scroll if we came from there -->
           <a
             href="explore.html"
             class="back-link"
-            style="text-decoration:none;color:var(--brand);"
+            style="text-decoration: none; color: var(--brand);"
             onclick="if (window.history.length > 1) { window.history.back(); return false; }"
           >
             ← Back to Explore
@@ -160,13 +156,11 @@
         </p>
 
         <section class="inside-section place-section-root">
-          <!-- Header -->
           <header class="place-header">
             <h1 id="place-name" class="display">Restaurant</h1>
             <p class="muted" id="place-subtitle">Cuisine • City</p>
           </header>
 
-          <!-- SUMMARY -->
           <section class="place-section" aria-labelledby="summary-heading">
             <h3 id="summary-heading">Summary</h3>
             <div class="chip-row">
@@ -176,7 +170,6 @@
             </div>
           </section>
 
-          <!-- LOCATION -->
           <section class="place-section" aria-labelledby="location-heading">
             <h3 id="location-heading">Location</h3>
             <p id="location-text" class="muted">
@@ -184,7 +177,6 @@
             </p>
           </section>
 
-          <!-- CONTACT -->
           <section class="place-section" aria-labelledby="contact-heading">
             <h3 id="contact-heading">Contact</h3>
             <p id="contact-text" class="muted">
@@ -192,7 +184,6 @@
             </p>
           </section>
 
-          <!-- HOURS -->
           <section class="place-section" aria-labelledby="hours-heading">
             <h3 id="hours-heading">Hours</h3>
             <p id="hours-text" class="muted">
@@ -200,7 +191,6 @@
             </p>
           </section>
 
-          <!-- RATING -->
           <section class="place-section" aria-labelledby="rating-heading">
             <h3 id="rating-heading">Your rating</h3>
             <p class="muted">Drag to rate this place from 1.0 – 10.0.</p>
@@ -213,7 +203,6 @@
             </div>
           </section>
 
-          <!-- EXTRA DETAILS -->
           <section class="place-section" aria-labelledby="details-heading">
             <h3 id="details-heading">Details</h3>
             <p id="details-text" class="muted">
@@ -221,17 +210,24 @@
             </p>
           </section>
 
-          <!-- LISTS -->
           <section class="place-section" aria-labelledby="lists-heading">
             <h3 id="lists-heading">Lists</h3>
             <p class="muted">
               Choose how you want to track this place.
             </p>
             <div class="list-buttons">
-              <button id="btn-add-to-try" class="btn btn-list btn-list-secondary" type="button">
+              <button
+                id="btn-add-to-try"
+                class="btn btn-list btn-list-secondary"
+                type="button"
+              >
                 + To-try list
               </button>
-              <button id="btn-add-tried" class="btn btn--primary btn-list btn-list-primary" type="button">
+              <button
+                id="btn-add-tried"
+                class="btn btn--primary btn-list btn-list-primary"
+                type="button"
+              >
                 + Already tried
               </button>
             </div>
@@ -246,6 +242,7 @@
   </footer>
 
   <script src="js/api.js"></script>
+  <script type="module" src="js/main.js"></script>
   <script src="js/place.js"></script>
 </body>
 </html>

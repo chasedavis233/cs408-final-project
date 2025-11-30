@@ -1,5 +1,4 @@
-// js/place.js — detail view for a single restaurant/place
-
+// Detail view for a single restaurant/place
 (function () {
   function $(id) {
     return document.getElementById(id);
@@ -7,7 +6,7 @@
 
   const params = new URLSearchParams(window.location.search);
 
-  // --- Basic fields from query string ---
+  // Core identity + basic metadata from query params
   const restaurantId =
     params.get("id") ||
     params.get("restaurantId") ||
@@ -34,7 +33,7 @@
   const driveThrough =
     params.get("drive_through") || params.get("driveThrough") || "";
 
-  // --- Header ---
+  // Header: name + subtitle line
   const nameEl = $("place-name");
   const subtitleEl = $("place-subtitle");
 
@@ -47,7 +46,7 @@
   subtitleEl.textContent =
     subtitleBits.length > 0 ? subtitleBits.join(" • ") : "Restaurant";
 
-  // --- Summary chips ---
+  // Top summary chips (cuisine / amenity / distance)
   const chipCuisine = $("chip-cuisine");
   const chipAmenity = $("chip-amenity");
   const chipDistance = $("chip-distance");
@@ -58,7 +57,6 @@
     chipCuisine.style.display = "none";
   }
 
-  // Only show amenity chip if it is meaningful and not just duplicate “restaurant”
   const amenityClean = (amenity || "").replace(/_/g, " ").trim().toLowerCase();
   const cuisineClean = (cuisine || "").trim().toLowerCase();
 
@@ -83,6 +81,7 @@
       else distanceLabel = `${Math.round(n)} mi away`;
     }
   }
+
   if (distanceLabel) {
     chipDistance.textContent = distanceLabel;
     chipDistance.hidden = false;
@@ -90,7 +89,7 @@
     chipDistance.hidden = true;
   }
 
-  // --- Location block ---
+  // Location block
   const locationEl = $("location-text");
   const lines = [];
 
@@ -103,7 +102,7 @@
   locationEl.textContent =
     lines.length > 0 ? lines.join("\n") : "No address data.";
 
-  // --- Contact block ---
+  // Contact info (phone + website)
   const contactEl = $("contact-text");
   const contactBits = [];
 
@@ -111,9 +110,11 @@
   if (website) contactBits.push(website);
 
   contactEl.textContent =
-    contactBits.length > 0 ? contactBits.join(" • ") : "No contact info available.";
+    contactBits.length > 0
+      ? contactBits.join(" • ")
+      : "No contact info available.";
 
-  // --- Hours: format opening_hours into nicer AM/PM lines ---
+  // Opening hours display (format raw OSM-style string)
   const hoursEl = $("hours-text");
 
   function formatTime(hh, mm) {
@@ -151,7 +152,7 @@
     hoursEl.textContent = "No hours information available.";
   }
 
-  // --- Extra details: takeaway / delivery / drive-through ---
+  // Extra flags: takeaway / delivery / drive-through
   const detailsEl = $("details-text");
   const detailBits = [];
 
@@ -170,9 +171,11 @@
   ].forEach((s) => s && detailBits.push(s));
 
   detailsEl.textContent =
-    detailBits.length > 0 ? detailBits.join(" • ") : "No extra details available.";
+    detailBits.length > 0
+      ? detailBits.join(" • ")
+      : "No extra details available.";
 
-  // --- Rating control (1.0–10.0) ---
+  // Local rating slider (1.0–10.0 UI control)
   const ratingRange = $("rating-range");
   const ratingValueEl = $("rating-value");
 
@@ -191,7 +194,7 @@
     updateRating();
   }
 
-  // --- Backend wiring for list buttons ---
+  // Add-to-list buttons wired to backend
   const api = window.BiteRecAPI || {};
   const { saveRestaurant } = api;
 

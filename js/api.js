@@ -1,17 +1,37 @@
-// api.js — BiteRec backend helpers (no bundler needed)
+// api.js — BiteRec backend helpers (no bundler required)
 
 (() => {
   const API_BASE = "https://uyjwympg0a.execute-api.us-east-2.amazonaws.com";
-  const HOUSEHOLD_USER = "household-main"; // kept for reference; backend also defaults
+  const HOUSEHOLD_USER = "household-main"; // final fallback profile
 
-  // Only send headers when we really need them.
-  // GET/DELETE: no custom headers -> simple CORS request.
-  // PUT: JSON body so we send Content-Type.
+  // Resolve the active profile ID from the store or localStorage
+  function getCurrentProfileId() {
+    try {
+      const store = window.BiteRecStore;
+      if (store && typeof store.getActiveProfileId === "function") {
+        const id = store.getActiveProfileId();
+        if (id) return id;
+      }
+
+      const raw = localStorage.getItem("biterec-profile-state-v1");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed.profileId === "string" && parsed.profileId) {
+          return parsed.profileId;
+        }
+      }
+    } catch (e) {
+      console.warn("getCurrentProfileId fallback failed", e);
+    }
+
+    return HOUSEHOLD_USER;
+  }
+
+  // Minimal headers: avoid preflight for simple GET/DELETE
   function headersFor(method) {
     if (method === "PUT") {
       return { "Content-Type": "application/json" };
     }
-    // GET / DELETE – no headers to avoid preflight
     return {};
   }
 
@@ -22,10 +42,12 @@
       method: "GET",
       headers: headersFor("GET"),
     });
+
     if (!res.ok) {
       console.error("fetchProfile failed", res.status, await res.text());
       throw new Error("Failed to load profile");
     }
+
     return res.json();
   }
 
@@ -35,19 +57,23 @@
       headers: headersFor("PUT"),
       body: JSON.stringify(profile),
     });
+
     if (!res.ok) {
       console.error("saveProfile failed", res.status, await res.text());
       throw new Error("Failed to save profile");
     }
+
     return res.json();
   }
 
   // ---- RESTAURANTS (/restaurants) ----
 
-  // Get all restaurants for a given profile (e.g. "chase" or "gf")
+  // Fetch restaurants for a profile (defaults to active profile)
   async function fetchRestaurants(profileId, { q, status, tag } = {}) {
+    const resolvedProfileId = profileId || getCurrentProfileId();
+
     const params = new URLSearchParams();
-    params.set("profileId", profileId);
+    params.set("profileId", resolvedProfileId);
 
     if (q) params.set("q", q);
     if (status) params.set("status", status);
@@ -59,27 +85,29 @@
       method: "GET",
       headers: headersFor("GET"),
     });
+
     if (!res.ok) {
       console.error("fetchRestaurants failed", res.status, await res.text());
       throw new Error("Failed to load restaurants");
     }
+
     return res.json();
   }
 
-  // Create or update a restaurant
+  // Create or update a restaurant for a profile
   async function saveRestaurant(profileId, restaurant) {
-    // Make sure we have an id
+    const resolvedProfileId = profileId || getCurrentProfileId();
+
     if (!restaurant.restaurantId) {
-      restaurant.restaurantId =
-        `r_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      restaurant.restaurantId = `r_${Date.now()}_${Math.random()
+        .toString(36)
+        .slice(2, 8)}`;
     }
 
-    const payload = { ...restaurant, profileId };
+    const payload = { ...restaurant, profileId: resolvedProfileId };
 
     const res = await fetch(
-      `${API_BASE}/restaurants/${encodeURIComponent(
-        restaurant.restaurantId
-      )}`,
+      `${API_BASE}/restaurants/${encodeURIComponent(restaurant.restaurantId)}`,
       {
         method: "PUT",
         headers: headersFor("PUT"),
@@ -91,12 +119,19 @@
       console.error("saveRestaurant failed", res.status, await res.text());
       throw new Error("Failed to save restaurant");
     }
+
     return res.json();
   }
 
-  async function fetchRestaurantById(restaurantId, profileId = HOUSEHOLD_USER) {
+  // Fetch a single restaurant by ID (optionally for a specific profile)
+  async function fetchRestaurantById(
+    restaurantId,
+    profileId // optional, defaults to active
+  ) {
+    const resolvedProfileId = profileId || getCurrentProfileId();
+
     const params = new URLSearchParams();
-    if (profileId) params.set("profileId", profileId);
+    if (resolvedProfileId) params.set("profileId", resolvedProfileId);
 
     const res = await fetch(
       `${API_BASE}/restaurants/${encodeURIComponent(
@@ -107,17 +142,21 @@
         headers: headersFor("GET"),
       }
     );
+
     if (!res.ok) {
       console.error("fetchRestaurantById failed", res.status, await res.text());
       throw new Error("Failed to load restaurant");
     }
+
     return res.json();
   }
 
-  // Delete a restaurant for a given profile
+  // Delete a restaurant for a profile
   async function deleteRestaurant(profileId, restaurantId) {
+    const resolvedProfileId = profileId || getCurrentProfileId();
+
     const params = new URLSearchParams();
-    if (profileId) params.set("profileId", profileId);
+    if (resolvedProfileId) params.set("profileId", resolvedProfileId);
 
     const res = await fetch(
       `${API_BASE}/restaurants/${encodeURIComponent(
@@ -128,11 +167,13 @@
         headers: headersFor("DELETE"),
       }
     );
+
     if (!res.ok) {
       console.error("deleteRestaurant failed", res.status, await res.text());
       throw new Error("Failed to delete restaurant");
     }
-    // 204 or empty body
+
+    // 204 or empty JSON body
     try {
       return await res.json();
     } catch {
@@ -141,7 +182,8 @@
   }
 
   // ---- PLACE SEARCH (/places/search) ----
-  // Talks to your SearchPlaces Lambda (OpenStreetMap-based search).
+
+  // Search external places via the SearchPlaces Lambda
   async function searchPlaces(zip, q) {
     const params = new URLSearchParams();
     if (zip) params.set("zip", zip);
@@ -149,10 +191,7 @@
 
     const res = await fetch(
       `${API_BASE}/places/search?${params.toString()}`,
-      {
-        // IMPORTANT: no custom headers here so it stays a simple GET
-        // and matches your Lambda CORS (only allows "content-type").
-      }
+      {}
     );
 
     if (!res.ok) {
@@ -160,11 +199,10 @@
       throw new Error(`Failed to search places (status ${res.status})`);
     }
 
-    // Lambda returns: { zip, center, count, places: [...] }
     return res.json();
   }
 
-  // Expose API on window so your existing scripts can use it
+  // Public API used by the front-end pages
   window.BiteRecAPI = {
     fetchProfile,
     saveProfile,
