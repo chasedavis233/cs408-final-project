@@ -4,10 +4,14 @@
   <meta charset="UTF-8" />
   <title>BiteRec • Explore</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="css/style.css" />
   <meta name="color-scheme" content="dark" />
+
+  <!-- Match fonts + favicon with other pages to avoid nav jitter -->
+  <link rel="icon" href="img/table.jpeg" type="image/jpeg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
+<body data-theme="obsidian">
 
   <!-- Site navigation -->
   <header class="site-header">
@@ -47,12 +51,13 @@
             </a>
           </li>
           <!-- Profile pill (active profile) is injected by js/main.js -->
+          <li class="nav-profile-slot"></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <main class="container">
+  <main class="container" id="main" tabindex="-1">
     <section class="page-frame">
       <header class="page-head">
         <h1 class="display">Discover Restaurants</h1>

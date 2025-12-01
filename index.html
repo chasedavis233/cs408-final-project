@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BiteRec</title>
-  <link rel="icon" href="logo.svg" type="image/svg+xml" />
+<link rel="icon" href="logo.svg" type="image/svg+xml" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
   <meta name="color-scheme" content="dark" />
@@ -35,6 +35,8 @@
               <span>My Lists</span>
             </a>
           </li>
+          <!-- Reserved slot for the profile pill (filled by js/main.js) -->
+          <li class="nav-profile-slot"></li>
         </ul>
       </nav>
     </div>
@@ -42,9 +44,15 @@
 
   <main class="container" id="main" tabindex="-1">
     <div class="page-frame">
+      <!-- HERO -->
       <section class="hero hero--image" aria-label="Welcome">
         <div class="hero__bg" aria-hidden="true">
-          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=80&auto=format&fit=crop" alt="" loading="eager" fetchpriority="high" />
+          <img
+            src="img/table.jpeg"
+            alt="Empty restaurant table set and ready for guests"
+            loading="eager"
+            fetchpriority="high"
+          />
           <div class="bg-gradient-hero"></div>
         </div>
 
@@ -79,54 +87,51 @@
         </aside>
       </section>
 
-      <section class="feature-band" aria-label="Highlights">
-        <h2>Track smarter, decide faster</h2>
-        <p class="muted">Tidy lists, rich notes, location-aware search, and gorgeous previews.</p>
+      <!-- SECTION 1: top features -->
+      <section class="feature-band" aria-label="Why use BiteRec">
+        <h2>Never forget a great restaurant again</h2>
+        <p class="muted">
+          BiteRec is your personal logbook for every spot you want to try,
+          every place you’ve loved, and all the little details in between.
+        </p>
 
         <div class="grid features-3">
           <article class="card">
-            <h3>Smart Categorization</h3>
-            <p class="muted">Auto-tags (pizza, coffee, fine dining, etc.) keep everything organized.</p>
+            <h3>Lists that match real life</h3>
+            <p class="muted">
+              Sort places into Saved, Tried, and Favorites so you always
+              know which spots are on your radar and which ones are worth going back to.
+            </p>
           </article>
           <article class="card">
-            <h3>Notes & Price</h3>
-            <p class="muted">Remember what you ordered and track price without friction.</p>
+            <h3>Remember what you ordered</h3>
+            <p class="muted">
+              Add quick notes, ratings, and what you actually ate so future you
+              knows exactly what to get again (or what to skip next time).
+            </p>
           </article>
           <article class="card">
-            <h3>Location-Aware</h3>
-            <p class="muted">Search by zip or “near me” and surface gems quickly.</p>
+            <h3>Profiles for every crowd</h3>
+            <p class="muted">
+              Create multiple profiles to keep different lists for your household,
+              date nights, travel, or roommates. Each with its own Saved, Tried, and Favorites.
+            </p>
           </article>
         </div>
       </section>
 
-      <section class="how" aria-label="How it works">
-        <h2 class="sr-only">How it works</h2>
+      <!-- SECTION 2: big statement -->
+      <section class="how" aria-label="BiteRec message">
+        <div class="inside-section" style="text-align: center;">
+          <h2 class="display" style="font-size: 2.2rem; margin-bottom: 12px;">
+            A revolutionized way to record your food journey
+          </h2>
 
-        <ol class="timeline">
-          <li class="t-item">
-            <div class="t-dot">1</div>
-            <div class="t-card">
-              <h3>Explore</h3>
-              <p class="muted">Browse cards, open details, and peek at ratings.</p>
-            </div>
-          </li>
-
-          <li class="t-item">
-            <div class="t-dot">2</div>
-            <div class="t-card">
-              <h3>Log</h3>
-              <p class="muted">Mark Tried / To-Try, add notes & rating.</p>
-            </div>
-          </li>
-
-          <li class="t-item">
-            <div class="t-dot">3</div>
-            <div class="t-card">
-              <h3>Revisit</h3>
-              <p class="muted">Filter by category, rating, or favorites—then book it.</p>
-            </div>
-          </li>
-        </ol>
+          <p class="muted" style="max-width: 720px; margin: 0 auto; font-size: 1.05rem; line-height: 1.7;">
+            Because your tastebuds deserve a story, not just a memory. Track where you’ve been, savor what you loved,
+            and let every restaurant become a chapter in your food journey.
+          </p>
+        </div>
       </section>
     </div>
   </main>

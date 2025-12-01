@@ -228,15 +228,16 @@
     loadStats();
   });
 
-  // Normalize status labels for stats
-  function normalizeStatus(status, visited) {
+  // Normalize status labels for stats:
+  // Only "tried" and "want" are treated as real list entries.
+  function normalizeStatus(status) {
     const s = (status || "").toString().toLowerCase().trim();
 
     if (s === "tried" || s === "visited") return "tried";
     if (s === "want" || s === "to-try" || s === "to try") return "want";
-    if (!s && visited === true) return "tried";
 
-    return s || "want";
+    // Anything else is treated as "none" and won't be counted in stats.
+    return "none";
   }
 
   // Load restaurant counts for the active profile
@@ -257,13 +258,22 @@
 
       const normalized = list.map((r) => ({
         ...r,
-        status: normalizeStatus(r.status, r.visited),
+        status: normalizeStatus(r.status),
       }));
 
-      const saved = normalized.length;
-      const tried = normalized.filter((r) => r.status === "tried").length;
-      const toTry = normalized.filter((r) => r.status === "want").length;
-      const favs = normalized.filter((r) => r.isFavorite || r.favorite).length;
+      // Only count restaurants that actually live in a list (tried / to-try)
+      const usable = normalized.filter(
+        (r) => r.status === "tried" || r.status === "want"
+      );
+
+      const saved = usable.length;
+      const tried = usable.filter((r) => r.status === "tried").length;
+      const toTry = usable.filter((r) => r.status === "want").length;
+      const favs = usable.filter(
+        (r) =>
+          (r.isFavorite || r.favorite) &&
+          (r.status === "tried" || r.status === "want")
+      ).length;
 
       if (statSavedEl) statSavedEl.textContent = saved;
       if (statTriedEl) statTriedEl.textContent = tried;
@@ -271,6 +281,10 @@
       if (statFavsEl) statFavsEl.textContent = favs;
     } catch (err) {
       console.error("Failed to load stats", err);
+      if (statSavedEl) statSavedEl.textContent = "0";
+      if (statTriedEl) statTriedEl.textContent = "0";
+      if (statToTryEl) statToTryEl.textContent = "0";
+      if (statFavsEl) statFavsEl.textContent = "0";
     }
   }
 

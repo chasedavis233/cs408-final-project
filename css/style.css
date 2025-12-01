@@ -1122,3 +1122,18 @@ a.rest-card:visited {
   background: #0b0f13;
   color: #ffffff;
 }
+
+/* Ensure even spacing between nav items, including the profile pill */
+.nav .navlinks {
+  display: flex;
+  align-items: center;
+  gap: 0rem;          /* controls the space between Explore, Lists, Profile */
+  margin-left: auto;    /* keeps the whole nav group on the right of the brand */
+  padding: 0;
+  list-style: none;
+}
+
+.nav .navlinks > li {
+  display: flex;
+  align-items: center;
+}

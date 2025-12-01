@@ -366,7 +366,13 @@ document.addEventListener("click", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
   const navList = document.querySelector(".navlinks");
   if (navList) {
-    const li = document.createElement("li");
+    // Use reserved slot if present, otherwise fall back to appending
+    let li = navList.querySelector(".nav-profile-slot");
+    if (!li) {
+      li = document.createElement("li");
+      navList.appendChild(li);
+    }
+
     li.innerHTML = `
       <button
         class="nav-profile-pill"
@@ -380,7 +386,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="nav-profile-caret">▾</span>
       </button>
     `;
-    navList.appendChild(li);
 
     const btn = li.querySelector(".nav-profile-pill");
     const initialsSpan = li.querySelector(".nav-profile-initials");
