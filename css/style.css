@@ -1137,3 +1137,27 @@ a.rest-card:visited {
   display: flex;
   align-items: center;
 }
+
+/* Bigger click target for the dropdown caret */
+.nav-profile-caret-hit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;          /* hitbox width */
+  height: 28px;         /* hitbox height */
+  margin-left: 2px;
+  border-radius: 999px;
+}
+
+.nav-profile-caret-hit:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.nav-profile-pill:hover .nav-profile-caret-hit:hover {
+  background: rgba(0, 0, 0, 0.22); /* still visible when pill is orange */
+}
+
+.nav-profile-caret {
+  display: inline-block;
+  transform-origin: 50% 55%;
+}

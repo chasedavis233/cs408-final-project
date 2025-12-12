@@ -373,19 +373,23 @@ document.addEventListener("DOMContentLoaded", () => {
       navList.appendChild(li);
     }
 
-    li.innerHTML = `
-      <button
-        class="nav-profile-pill"
-        type="button"
-        aria-label="Active profile"
-        aria-haspopup="true"
-        aria-expanded="false"
-      >
-        <span class="nav-profile-initials"></span>
-        <span class="nav-profile-label"></span>
+  li.innerHTML = `
+    <button
+      class="nav-profile-pill"
+      type="button"
+      aria-label="Active profile"
+      aria-haspopup="true"
+      aria-expanded="false"
+    >
+      <span class="nav-profile-initials"></span>
+      <span class="nav-profile-label"></span>
+
+      <span class="nav-profile-caret-hit" aria-label="Switch profile" role="button" tabindex="0">
         <span class="nav-profile-caret">▾</span>
-      </button>
-    `;
+      </span>
+    </button>
+  `;
+
 
     const btn = li.querySelector(".nav-profile-pill");
     const initialsSpan = li.querySelector(".nav-profile-initials");
@@ -775,7 +779,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Clicking caret toggles dropdown; clicking pill body goes to profile page
     btn.addEventListener("click", (e) => {
-      const onCaret = e.target.closest(".nav-profile-caret");
+      const onCaret = e.target.closest(".nav-profile-caret-hit");
 
       if (onCaret) {
         e.stopPropagation();
